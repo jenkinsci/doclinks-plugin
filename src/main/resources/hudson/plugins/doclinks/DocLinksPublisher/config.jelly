@@ -1,0 +1,38 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <f:entry title="${%Documents}">
+    <f:repeatable name="docs" var="doc" items="${instance.documents}">
+      <table width="100%">
+
+        <f:entry title="${%Title}" >
+          <f:textbox name="doc.title" value="${doc.title}"
+                     checkUrl="'descriptorByName/DocLinksPublisher/checkTitle?title='+encodeURIComponent(this.value)"/>
+        </f:entry>
+
+        <f:entry title="${%Description}" >
+          <f:textbox name="doc.description" value="${doc.description}" />
+        </f:entry>
+
+        <f:entry title="${%Directory}"
+                 description="${%directory.description}">
+          <f:textbox name="doc.directory" value="${doc.directory}"
+                     onchange="Form.findMatchingInput(this,'doc.file').onchange()"
+                     checkUrl="'descriptorByName/DocLinksPublisher/checkDirectory?dir='+encodeURIComponent(this.value)" />
+        </f:entry>
+
+        <f:entry title="${%File}"
+                 description="${%file.description}" >
+          <f:textbox name="doc.file" value="${doc.file}"
+                     checkUrl="'descriptorByName/DocLinksPublisher/checkFile?dir=' + encodeURIComponent(Form.findMatchingInput(this, 'doc.directory').value) + '&amp;file='+encodeURIComponent(this.value)" />
+        </f:entry>
+        <input name="doc.id" type="hidden" value="${doc.id}" />
+
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+          </div>
+        </f:entry>
+
+      </table>
+    </f:repeatable>
+  </f:entry>
+</j:jelly>
