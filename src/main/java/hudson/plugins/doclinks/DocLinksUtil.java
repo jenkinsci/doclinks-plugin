@@ -23,7 +23,7 @@ public class DocLinksUtil {
     /**
      * get the id, which has not been used.
      */
-    public static String getNextId(final List<Document> documents) {
+    public static synchronized String getNextId(final List<Document> documents) {
         int max = 0;
         for (final Document doc : documents) {
             if (doc.getId() == null) {
