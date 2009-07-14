@@ -1,15 +1,20 @@
 package hudson.plugins.doclinks;
 
 import hudson.Util;
+import hudson.maven.MavenModule;
 import hudson.model.AbstractItem;
+import hudson.plugins.doclinks.m2.DocLinksMavenReporter;
 import java.io.File;
+import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  *
  * @author Seiji Sogabe
  */
-public class Document {
+public class Document implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final String title;
     private final String description;
@@ -52,6 +57,15 @@ public class Document {
 
     public boolean hasResources(final AbstractItem project) {
         final File docLinksDir = DocLinksPublisher.getDocLinksDir(project);
+        return isDocumentExits(docLinksDir);
+    }
+
+    public boolean hasResources(final MavenModule module) {
+        final File docLinksDir = DocLinksMavenReporter.getDocLinksDir(module);
+        return isDocumentExits(docLinksDir);
+    }
+
+    private boolean isDocumentExits(final File docLinksDir) {
         final File docDir = new File(docLinksDir, String.valueOf(getId()));
         if (file == null) {
             return docDir.exists();

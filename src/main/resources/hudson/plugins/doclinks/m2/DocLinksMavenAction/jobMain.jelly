@@ -1,0 +1,21 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+
+ <h2>${%Document links}</h2>
+
+  <ul>
+  <j:forEach var="entry" items="${it.documentsMap}" >
+    <j:set var="doc" value="${entry.value}" />
+    <li>    
+      <j:choose>
+        <j:when test="${it.hasDocument(doc)}" >
+          <a href="${it.urlName}/${doc.id}/" tooltip="${h.escape(doc.description)}">${h.escape(doc.title)}</a>
+        </j:when>
+        <j:otherwise>
+          <span tooltip="${h.escape(doc.description)}">${h.escape(doc.title)}</span>
+        </j:otherwise>
+      </j:choose>
+    </li>
+  </j:forEach>
+  </ul>
+
+</j:jelly>

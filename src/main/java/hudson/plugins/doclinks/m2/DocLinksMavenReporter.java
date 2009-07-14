@@ -1,21 +1,20 @@
-package hudson.plugins.doclinks;
+package hudson.plugins.doclinks.m2;
 
+import hudson.plugins.doclinks.*;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.maven.AbstractMavenProject;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractItem;
+import hudson.maven.MavenBuild;
+import hudson.maven.MavenModule;
+import hudson.maven.MavenReporter;
+import hudson.maven.MavenReporterDescriptor;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Descriptor.FormException;
 import hudson.model.Hudson;
 import hudson.model.Result;
-import hudson.tasks.BuildStepDescriptor;
-import hudson.tasks.Publisher;
 import hudson.util.FormValidation;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.AncestorInPath;
@@ -31,23 +31,29 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
- * Saves documents which are created in build step.
- * 
- * @author Seiji Sogabe
+ *
+ * @author sogabe
  */
-public class DocLinksPublisher extends Publisher {
+public class DocLinksMavenReporter extends MavenReporter {
+
+    private static final long serialVersionUID = 1L;
 
     @Extension
-    public static final Descriptor<Publisher> DESCRIPTOR = new DocLinksDescriptor();
+    public static final MavenReporterDescriptor DESCRIPTOR = new DocLinksMavenReporterDescriptor();
 
     private final List<Document> documents;
 
-    public static File getDocLinksDir(final AbstractItem project) {
-        return new File(project.getRootDir(), Constants.PLUGIN_URL);
+    public DocLinksMavenReporter(final List<Document> docs) {
+        this.documents = docs;
     }
 
-    public DocLinksPublisher(final List<Document> docs) {
-        this.documents = docs;
+    public static File getDocLinksDir(final MavenModule module) {
+        return new File(module.getRootDir(), Constants.PLUGIN_URL);
+    }
+
+    @Override
+    public MavenReporterDescriptor getDescriptor() {
+        return DESCRIPTOR;
     }
 
     /**
@@ -58,21 +64,16 @@ public class DocLinksPublisher extends Publisher {
     }
 
     @Override
-    public Descriptor<Publisher> getDescriptor() {
-        return DESCRIPTOR;
-    }
-
-    @Override
-    public Action getProjectAction(final AbstractProject<?, ?> project) {
+    public Action getProjectAction(final MavenModule module) {
         final Map<String, Document> map = new LinkedHashMap<String, Document>();
         for (final Document doc : documents) {
             map.put(doc.getId(), doc);
         }
-        return new DocLinksAction(project, map);
+        return new DocLinksMavenAction(module, map);
     }
 
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
+    public boolean end(final MavenBuild build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
 
         final PrintStream logger = listener.getLogger();
 
@@ -81,7 +82,7 @@ public class DocLinksPublisher extends Publisher {
         }
 
         // remove the old documents.
-        final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getProject()));
+        final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getParent()));
         try {
             docLinksDir.deleteRecursive();
         } catch (final IOException e) {
@@ -93,24 +94,24 @@ public class DocLinksPublisher extends Publisher {
         for (final Document doc : documents) {
             final String directory = doc.getDirectory();
             if (!DocLinksUtils.isValidDirectory(directory)) {
-                final String cause = Messages.DocLinksPublisher_DirectoryInvalid();
+                final String cause = Messages.DocLinksMavenReporter_DirectoryInvalid();
                 DocLinksUtils.log(logger,
-                        Messages.DocLinksPublisher_SkipDocument(doc.getTitle(), cause));
+                        Messages.DocLinksMavenReporter_SkipDocument(doc.getTitle(), cause));
                 continue;
             }
 
             final FilePath ws = build.getParent().getWorkspace();
             final FilePath docDir = (directory != null) ? ws.child(directory) : ws;
             if (!docDir.exists()) {
-                final String cause = Messages.DocLinksPublisher_DirectoryNotExist(docDir.getName());
+                final String cause = Messages.DocLinksMavenReporter_DirectoryNotExist(docDir.getName());
                 DocLinksUtils.log(logger,
-                        Messages.DocLinksPublisher_SkipDocument(doc.getTitle(), cause));
+                        Messages.DocLinksMavenReporter_SkipDocument(doc.getTitle(), cause));
                 continue;
             }
 
             final FilePath target = new FilePath(docLinksDir, String.valueOf(doc.getId()));
             try {
-                DocLinksUtils.log(logger, Messages.DocLinksPublisher_CopyDocument(doc.getTitle(), target.getName()));
+                DocLinksUtils.log(logger, Messages.DocLinksMavenReporter_CopyDocument(doc.getTitle(), target.getName()));
                 docDir.copyRecursiveTo("**/*", target);
             } catch (final IOException e) {
                 Util.displayIOException(e, listener);
@@ -118,17 +119,19 @@ public class DocLinksPublisher extends Publisher {
             }
         }
 
+        build.registerAsProjectAction(this);
+
         return true;
     }
-  
-    public static class DocLinksDescriptor extends BuildStepDescriptor<Publisher> {
 
-        public DocLinksDescriptor() {
-            super(DocLinksPublisher.class);
+    public static class DocLinksMavenReporterDescriptor extends MavenReporterDescriptor {
+
+        public DocLinksMavenReporterDescriptor() {
+            super(DocLinksMavenReporter.class);
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public DocLinksMavenReporter newInstance(StaplerRequest req, JSONObject formData) throws FormException {
             final List<Document> docs = req.bindParametersToList(Document.class, "doc.");
             // assign id for new documents;
             for (final Document doc : docs) {
@@ -136,12 +139,7 @@ public class DocLinksPublisher extends Publisher {
                     doc.setId(DocLinksUtils.getNextId(docs));
                 }
             }
-            return new DocLinksPublisher(docs);
-        }
-
-        @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
-            return !AbstractMavenProject.class.isAssignableFrom(jobType);
+            return new DocLinksMavenReporter(docs);
         }
 
         /**
@@ -152,7 +150,7 @@ public class DocLinksPublisher extends Publisher {
 
             title = Util.fixEmptyAndTrim(title);
             if (title == null) {
-                return FormValidation.error(Messages.DocLinksPublisher_Required());
+                return FormValidation.error(Messages.DocLinksMavenReporter_Required());
             }
             return FormValidation.ok();
         }
@@ -166,7 +164,7 @@ public class DocLinksPublisher extends Publisher {
 
             dir = Util.fixEmptyAndTrim(dir);
             if (!DocLinksUtils.isValidDirectory(dir)) {
-                return FormValidation.error(Messages.DocLinksPublisher_DirectoryInvalid());
+                return FormValidation.error(Messages.DocLinksMavenReporter_DirectoryInvalid());
             }
 
             final FilePath ws = project.getWorkspace();
@@ -199,7 +197,9 @@ public class DocLinksPublisher extends Publisher {
 
         @Override
         public String getDisplayName() {
-            return Messages.DocLinksPublisher_DisplayName();
+            return Messages.DocLinksMavenReporter_DisplayName();
         }
     }
+
+    private static final Logger LOGGER = Logger.getLogger(DocLinksMavenReporter.class.getName());
 }

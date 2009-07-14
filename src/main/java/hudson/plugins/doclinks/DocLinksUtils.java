@@ -2,15 +2,16 @@ package hudson.plugins.doclinks;
 
 import java.io.PrintStream;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Utilities.
  *
  * @author Seiji Sogabe
  */
-public class DocLinksUtil {
+public class DocLinksUtils {
 
-    private DocLinksUtil() {
+    private DocLinksUtils() {
         // 
     }
 
@@ -44,5 +45,13 @@ public class DocLinksUtil {
             d = d + "/";
         }
         return d.indexOf("../") == -1;
+    }
+
+    public static String getDocumentId(final String path) {
+        final StringTokenizer tokenizer = new StringTokenizer(path, "/");
+        if (tokenizer.hasMoreElements()) {
+            return tokenizer.nextToken();
+        }
+        return null;
     }
 }

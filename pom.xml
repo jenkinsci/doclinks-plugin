@@ -49,6 +49,15 @@
         </plugins>
     </build>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.jvnet.hudson.main</groupId>
+            <artifactId>maven-plugin</artifactId>
+            <version>1.315</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
     <reporting>
         <plugins>
             <plugin>

@@ -1,7 +1,8 @@
-package hudson.plugins.doclinks;
+package hudson.plugins.doclinks.m2;
 
+import hudson.plugins.doclinks.*;
 import hudson.FilePath;
-import hudson.model.AbstractItem;
+import hudson.maven.MavenModule;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
 import java.io.IOException;
@@ -18,13 +19,13 @@ import org.kohsuke.stapler.StaplerResponse;
  *
  * @author Seiji Sogabe
  */
-public class DocLinksAction implements Action {
+public class DocLinksMavenAction implements Action {
 
-    private final AbstractItem project;
+    private final MavenModule module;
     private final Map<String, Document> documents;
 
-    public DocLinksAction(final AbstractItem project, final Map<String, Document> document) {
-        this.project = project;
+    public DocLinksMavenAction(final MavenModule module, final Map<String, Document> document) {
+        this.module = module;
         this.documents = document;
     }
 
@@ -51,7 +52,7 @@ public class DocLinksAction implements Action {
     }
 
     public boolean hasDocument(final Document doc) {
-        return doc.hasResources(project);
+        return doc.hasResources(module);
     }
 
     public DirectoryBrowserSupport doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
@@ -59,7 +60,7 @@ public class DocLinksAction implements Action {
         // get document id from request
         final String id = DocLinksUtils.getDocumentId(req.getRestOfPath());
         if (id == null) {
-            LOGGER.warning(Messages.DocLinksAction_IllegalURI(req.getRestOfPath()));
+            LOGGER.warning(Messages.DocLinksMavenAction_IllegalURI(req.getRestOfPath()));
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
@@ -67,12 +68,12 @@ public class DocLinksAction implements Action {
         // check document
         final Document doc = documents.get(id);
         if (doc == null) {
-            LOGGER.warning(Messages.DocLinksAction_DocumentNotFound());
+            LOGGER.warning(Messages.DocLinksMavenAction_DocumentNotFound());
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return null;
         }
 
-        final FilePath basePath = new FilePath(DocLinksPublisher.getDocLinksDir(project));
+        final FilePath basePath = new FilePath(DocLinksMavenReporter.getDocLinksDir(module));
         final DirectoryBrowserSupport dbs = new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
         // set indexfile
         if (doc.getFile() != null) {
@@ -82,5 +83,5 @@ public class DocLinksAction implements Action {
         return dbs;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(DocLinksAction.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocLinksMavenAction.class.getName());
 }
