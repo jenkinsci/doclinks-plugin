@@ -93,7 +93,7 @@ public class DocLinksPublisher extends Publisher {
         for (final Document doc : documents) {
             final String directory = doc.getDirectory();
             if (!DocLinksUtils.isValidDirectory(directory)) {
-                final String cause = Messages.DocLinksPublisher_DirectoryInvalid();
+                final String cause = Messages.DocLinksUtils_DirectoryInvalid();
                 DocLinksUtils.log(logger,
                         Messages.DocLinksPublisher_SkipDocument(doc.getTitle(), cause));
                 continue;
@@ -149,12 +149,7 @@ public class DocLinksPublisher extends Publisher {
          */
         public FormValidation doCheckTitle(@QueryParameter String title) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
-
-            title = Util.fixEmptyAndTrim(title);
-            if (title == null) {
-                return FormValidation.error(Messages.DocLinksPublisher_Required());
-            }
-            return FormValidation.ok();
+            return DocLinksUtils.validateTitle(title);
         }
 
         /**
@@ -163,38 +158,16 @@ public class DocLinksPublisher extends Publisher {
         public FormValidation doCheckDirectory(@AncestorInPath AbstractProject project, @QueryParameter String dir)
                 throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
-
-            dir = Util.fixEmptyAndTrim(dir);
-            if (!DocLinksUtils.isValidDirectory(dir)) {
-                return FormValidation.error(Messages.DocLinksPublisher_DirectoryInvalid());
-            }
-
-            final FilePath ws = project.getWorkspace();
-            return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
+            return DocLinksUtils.validateDirectory(project, dir);
         }
 
         /**
          * check to see if file exists.
          */
         public FormValidation doCheckFile(@AncestorInPath AbstractProject project, @QueryParameter String dir,
-                @QueryParameter String file)
-                throws IOException, ServletException {
+                @QueryParameter String file) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
-
-            file = Util.fixEmptyAndTrim(file);
-            if (file == null) {
-                FormValidation.ok();
-            }
-
-            // job has not built yet
-            final FilePath ws = project.getWorkspace();
-            if (ws == null) {
-                return FormValidation.ok();
-            }
-
-            dir = Util.fixEmptyAndTrim(dir);
-            final FilePath targetDir = (dir != null) ? new FilePath(ws, dir) : ws;
-            return targetDir.validateRelativePath(file, true, true);
+            return DocLinksUtils.validateFile(project, dir, file);
         }
 
         @Override

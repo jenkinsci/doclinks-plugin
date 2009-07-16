@@ -1,5 +1,10 @@
 package hudson.plugins.doclinks;
 
+import hudson.FilePath;
+import hudson.Util;
+import hudson.model.AbstractProject;
+import hudson.util.FormValidation;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -54,4 +59,37 @@ public class DocLinksUtils {
         }
         return null;
     }
+
+    public static FormValidation validateTitle(final String title) {
+        final String t = Util.fixEmptyAndTrim(title);
+        if (t == null) {
+            return FormValidation.error(Messages.DocLinksUtils_Required());
+        }
+        return FormValidation.ok();
+    }
+
+    public static FormValidation validateDirectory(final AbstractProject project, final String directory) throws IOException {
+        final String dir = Util.fixEmptyAndTrim(directory);
+        if (!DocLinksUtils.isValidDirectory(dir)) {
+            return FormValidation.error(Messages.DocLinksUtils_DirectoryInvalid());
+        }
+        final FilePath ws = project.getWorkspace();
+        return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
+    }
+
+    public static FormValidation validateFile(final AbstractProject project, final String directory, final String file) throws IOException {
+        final String f = Util.fixEmptyAndTrim(file);
+        if (f == null) {
+            FormValidation.ok();
+        }
+        // job has not built yet
+        final FilePath ws = project.getWorkspace();
+        if (ws == null) {
+            return FormValidation.ok();
+        }
+        final String dir = Util.fixEmptyAndTrim(directory);
+        final FilePath targetDir = (dir != null) ? new FilePath(ws, dir) : ws;
+        return targetDir.validateRelativePath(file, true, true);
+    }
+    
 }

@@ -83,6 +83,7 @@ public class DocLinksMavenReporter extends MavenReporter {
 
         // remove the old documents.
         final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getParent()));
+        DocLinksUtils.log(logger, "docLinksDir: " + docLinksDir.getRemote());
         try {
             docLinksDir.deleteRecursive();
         } catch (final IOException e) {
@@ -102,6 +103,7 @@ public class DocLinksMavenReporter extends MavenReporter {
 
             final FilePath ws = build.getParent().getWorkspace();
             final FilePath docDir = (directory != null) ? ws.child(directory) : ws;
+            DocLinksUtils.log(logger, "docDir: " + docDir.getRemote());
             if (!docDir.exists()) {
                 final String cause = Messages.DocLinksMavenReporter_DirectoryNotExist(docDir.getName());
                 DocLinksUtils.log(logger,
@@ -147,12 +149,7 @@ public class DocLinksMavenReporter extends MavenReporter {
          */
         public FormValidation doCheckTitle(@QueryParameter String title) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
-
-            title = Util.fixEmptyAndTrim(title);
-            if (title == null) {
-                return FormValidation.error(Messages.DocLinksMavenReporter_Required());
-            }
-            return FormValidation.ok();
+            return DocLinksUtils.validateTitle(title);
         }
 
         /**
@@ -161,14 +158,7 @@ public class DocLinksMavenReporter extends MavenReporter {
         public FormValidation doCheckDirectory(@AncestorInPath AbstractProject project, @QueryParameter String dir)
                 throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
-
-            dir = Util.fixEmptyAndTrim(dir);
-            if (!DocLinksUtils.isValidDirectory(dir)) {
-                return FormValidation.error(Messages.DocLinksMavenReporter_DirectoryInvalid());
-            }
-
-            final FilePath ws = project.getWorkspace();
-            return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
+            return DocLinksUtils.validateDirectory(project, dir);
         }
 
         /**
@@ -178,21 +168,7 @@ public class DocLinksMavenReporter extends MavenReporter {
                 @QueryParameter String file)
                 throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
-
-            file = Util.fixEmptyAndTrim(file);
-            if (file == null) {
-                FormValidation.ok();
-            }
-
-            // job has not built yet
-            final FilePath ws = project.getWorkspace();
-            if (ws == null) {
-                return FormValidation.ok();
-            }
-
-            dir = Util.fixEmptyAndTrim(dir);
-            final FilePath targetDir = (dir != null) ? new FilePath(ws, dir) : ws;
-            return targetDir.validateRelativePath(file, true, true);
+            return DocLinksUtils.validateFile(project, dir, file);
         }
 
         @Override
