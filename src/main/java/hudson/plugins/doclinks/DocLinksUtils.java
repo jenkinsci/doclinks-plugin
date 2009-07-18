@@ -77,7 +77,8 @@ public class DocLinksUtils {
         return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
     }
 
-    public static FormValidation validateFile(final AbstractProject project, final String directory, final String file) throws IOException {
+    public static FormValidation validateFile(final AbstractProject project, final String directory, final String file)
+            throws IOException {
         final String f = Util.fixEmptyAndTrim(file);
         if (f == null) {
             FormValidation.ok();
@@ -91,5 +92,26 @@ public class DocLinksUtils {
         final FilePath targetDir = (dir != null) ? new FilePath(ws, dir) : ws;
         return targetDir.validateRelativePath(file, true, true);
     }
-    
+
+    public static void publishDocument(final Document doc, final FilePath ws, final FilePath docLinksDir, final PrintStream logger)
+            throws IOException, InterruptedException {
+
+        final String directory = doc.getDirectory();
+        if (!DocLinksUtils.isValidDirectory(directory)) {
+            final String cause = Messages.DocLinksUtils_DirectoryInvalid();
+            DocLinksUtils.log(logger, Messages.DocLinksUtils_SkipDocument(doc.getTitle(), cause));
+            throw new IOException();
+        }
+
+        final FilePath docDir = (directory != null) ? ws.child(directory) : ws;
+        if (!docDir.exists()) {
+            final String cause = Messages.DocLinksUtils_DirectoryNotExist(docDir.getName());
+            DocLinksUtils.log(logger, Messages.DocLinksUtils_SkipDocument(doc.getTitle(), cause));
+        }
+
+        final FilePath target = new FilePath(docLinksDir, String.valueOf(doc.getId()));
+        DocLinksUtils.log(logger, Messages.DocLinksUtils_CopyDocument(doc.getTitle(), target.getName()));
+        docDir.copyRecursiveTo("**/*", target);
+    }
+
 }

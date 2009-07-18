@@ -80,42 +80,18 @@ public class DocLinksPublisher extends Publisher {
             return true;
         }
 
-        // remove the old documents.
+        final FilePath ws = build.getParent().getWorkspace();
         final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getProject()));
+
         try {
             docLinksDir.deleteRecursive();
+            for (final Document doc : documents) {
+                DocLinksUtils.publishDocument(doc, ws, docLinksDir, logger);
+            }
         } catch (final IOException e) {
             Util.displayIOException(e, listener);
             build.setResult(Result.UNSTABLE);
             return true;
-        }
-
-        for (final Document doc : documents) {
-            final String directory = doc.getDirectory();
-            if (!DocLinksUtils.isValidDirectory(directory)) {
-                final String cause = Messages.DocLinksUtils_DirectoryInvalid();
-                DocLinksUtils.log(logger,
-                        Messages.DocLinksPublisher_SkipDocument(doc.getTitle(), cause));
-                continue;
-            }
-
-            final FilePath ws = build.getParent().getWorkspace();
-            final FilePath docDir = (directory != null) ? ws.child(directory) : ws;
-            if (!docDir.exists()) {
-                final String cause = Messages.DocLinksPublisher_DirectoryNotExist(docDir.getName());
-                DocLinksUtils.log(logger,
-                        Messages.DocLinksPublisher_SkipDocument(doc.getTitle(), cause));
-                continue;
-            }
-
-            final FilePath target = new FilePath(docLinksDir, String.valueOf(doc.getId()));
-            try {
-                DocLinksUtils.log(logger, Messages.DocLinksPublisher_CopyDocument(doc.getTitle(), target.getName()));
-                docDir.copyRecursiveTo("**/*", target);
-            } catch (final IOException e) {
-                Util.displayIOException(e, listener);
-                build.setResult(Result.UNSTABLE);
-            }
         }
 
         return true;
@@ -164,8 +140,8 @@ public class DocLinksPublisher extends Publisher {
         /**
          * check to see if file exists.
          */
-        public FormValidation doCheckFile(@AncestorInPath AbstractProject project, @QueryParameter String dir,
-                @QueryParameter String file) throws IOException, ServletException {
+        public FormValidation doCheckFile(@AncestorInPath AbstractProject project, @QueryParameter String dir, @QueryParameter String file)
+                throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
             return DocLinksUtils.validateFile(project, dir, file);
         }
