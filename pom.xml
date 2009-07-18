@@ -15,7 +15,11 @@
     <description>This plugin allows you to publish documents which are created in the build steps.</description>
     <version>0.2-SNAPSHOT</version>
     <url>http://wiki.hudson-ci.org/display/HUDSON/DocLinks+Plugin</url>
-  
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
