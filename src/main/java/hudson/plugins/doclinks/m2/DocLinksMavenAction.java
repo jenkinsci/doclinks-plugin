@@ -1,10 +1,12 @@
 package hudson.plugins.doclinks.m2;
 
-import hudson.plugins.doclinks.*;
 import hudson.FilePath;
 import hudson.maven.MavenModule;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
+import hudson.plugins.doclinks.Constants;
+import hudson.plugins.doclinks.DocLinksUtils;
+import hudson.plugins.doclinks.Document;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -55,7 +57,8 @@ public class DocLinksMavenAction implements Action {
         return doc.hasResources(module);
     }
 
-    public DirectoryBrowserSupport doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
+    public DirectoryBrowserSupport doDynamic(final StaplerRequest req, final StaplerResponse rsp)
+            throws IOException, ServletException {
 
         // get document id from request
         final String id = DocLinksUtils.getDocumentId(req.getRestOfPath());
@@ -74,7 +77,8 @@ public class DocLinksMavenAction implements Action {
         }
 
         final FilePath basePath = new FilePath(DocLinksMavenReporter.getDocLinksDir(module));
-        final DirectoryBrowserSupport dbs = new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
+        final DirectoryBrowserSupport dbs
+                = new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
         // set indexfile
         if (doc.getFile() != null) {
             dbs.setIndexFileName(doc.getFile());

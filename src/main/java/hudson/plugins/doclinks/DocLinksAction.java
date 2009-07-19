@@ -54,7 +54,8 @@ public class DocLinksAction implements Action {
         return doc.hasResources(project);
     }
 
-    public DirectoryBrowserSupport doDynamic(final StaplerRequest req, final StaplerResponse rsp) throws IOException, ServletException {
+    public DirectoryBrowserSupport doDynamic(final StaplerRequest req, final StaplerResponse rsp)
+            throws IOException, ServletException {
 
         // get document id from request
         final String id = DocLinksUtils.getDocumentId(req.getRestOfPath());
@@ -73,7 +74,8 @@ public class DocLinksAction implements Action {
         }
 
         final FilePath basePath = new FilePath(DocLinksPublisher.getDocLinksDir(project));
-        final DirectoryBrowserSupport dbs = new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
+        final DirectoryBrowserSupport dbs
+                = new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
         // set indexfile
         if (doc.getFile() != null) {
             dbs.setIndexFileName(doc.getFile());

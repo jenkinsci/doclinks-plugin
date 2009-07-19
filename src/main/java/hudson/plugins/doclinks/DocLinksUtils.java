@@ -14,7 +14,7 @@ import java.util.StringTokenizer;
  *
  * @author Seiji Sogabe
  */
-public class DocLinksUtils {
+public final class DocLinksUtils {
 
     private DocLinksUtils() {
         // 
@@ -68,7 +68,8 @@ public class DocLinksUtils {
         return FormValidation.ok();
     }
 
-    public static FormValidation validateDirectory(final AbstractProject project, final String directory) throws IOException {
+    public static FormValidation validateDirectory(final AbstractProject project, final String directory)
+            throws IOException {
         final String dir = Util.fixEmptyAndTrim(directory);
         if (!DocLinksUtils.isValidDirectory(dir)) {
             return FormValidation.error(Messages.DocLinksUtils_DirectoryInvalid());
@@ -93,8 +94,8 @@ public class DocLinksUtils {
         return targetDir.validateRelativePath(file, true, true);
     }
 
-    public static void publishDocument(final Document doc, final FilePath ws, final FilePath docLinksDir, final PrintStream logger)
-            throws IOException, InterruptedException {
+    public static void publishDocument(final Document doc, final FilePath ws, final FilePath docLinksDir, 
+            final PrintStream logger) throws IOException, InterruptedException {
 
         final String directory = doc.getDirectory();
         if (!DocLinksUtils.isValidDirectory(directory)) {

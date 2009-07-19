@@ -23,7 +23,8 @@ public class Document implements Serializable {
     private String id;
 
     @DataBoundConstructor
-    public Document(final String title, final String description, final String directory, final String file, final String id) {
+    public Document(final String title, final String description, final String directory, final String file,
+            final String id) {
         this.title = Util.fixEmptyAndTrim(title);
         this.description = Util.fixEmptyAndTrim(description);
         this.directory = Util.fixEmptyAndTrim(directory);

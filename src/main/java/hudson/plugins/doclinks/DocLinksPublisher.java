@@ -72,7 +72,8 @@ public class DocLinksPublisher extends Publisher {
     }
 
     @Override
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener) throws InterruptedException, IOException {
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
+            throws InterruptedException, IOException {
 
         final PrintStream logger = listener.getLogger();
 
@@ -104,7 +105,7 @@ public class DocLinksPublisher extends Publisher {
         }
 
         @Override
-        public Publisher newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+        public Publisher newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
             final List<Document> docs = req.bindParametersToList(Document.class, "doc.");
             // assign id for new documents;
             for (final Document doc : docs) {
@@ -116,14 +117,14 @@ public class DocLinksPublisher extends Publisher {
         }
 
         @Override
-        public boolean isApplicable(Class<? extends AbstractProject> jobType) {
+        public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return !AbstractMavenProject.class.isAssignableFrom(jobType);
         }
 
         /**
          * check to see if title is not null.
          */
-        public FormValidation doCheckTitle(@QueryParameter String title) throws IOException, ServletException {
+        public FormValidation doCheckTitle(@QueryParameter final String title) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
             return DocLinksUtils.validateTitle(title);
         }
@@ -131,8 +132,8 @@ public class DocLinksPublisher extends Publisher {
         /**
          * check to see if directory is valid and exists.
          */
-        public FormValidation doCheckDirectory(@AncestorInPath AbstractProject project, @QueryParameter String dir)
-                throws IOException, ServletException {
+        public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject project, 
+                @QueryParameter final String dir) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
             return DocLinksUtils.validateDirectory(project, dir);
         }
@@ -140,7 +141,8 @@ public class DocLinksPublisher extends Publisher {
         /**
          * check to see if file exists.
          */
-        public FormValidation doCheckFile(@AncestorInPath AbstractProject project, @QueryParameter String dir, @QueryParameter String file)
+        public FormValidation doCheckFile(@AncestorInPath final AbstractProject project, 
+                @QueryParameter final String dir, @QueryParameter final String file)
                 throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
             return DocLinksUtils.validateFile(project, dir, file);

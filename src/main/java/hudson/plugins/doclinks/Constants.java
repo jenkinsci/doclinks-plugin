@@ -5,7 +5,7 @@ package hudson.plugins.doclinks;
  * 
  * @author Seiji Sogabe
  */
-public class Constants {
+public final class Constants {
 
     public static final String PLUGIN_URL = "doclinks";
 
