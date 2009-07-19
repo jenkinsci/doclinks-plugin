@@ -10,12 +10,12 @@ import hudson.model.AbstractItem;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
-import hudson.model.Descriptor;
 import hudson.model.Descriptor.FormException;
 import hudson.model.Hudson;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
+import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +35,10 @@ import org.kohsuke.stapler.StaplerRequest;
  * 
  * @author Seiji Sogabe
  */
-public class DocLinksPublisher extends Publisher {
+public class DocLinksPublisher extends Recorder {
 
     @Extension
-    public static final Descriptor<Publisher> DESCRIPTOR = new DocLinksDescriptor();
+    public static final BuildStepDescriptor<Publisher> DESCRIPTOR = new DocLinksDescriptor();
 
     private final List<Document> documents;
 
@@ -58,7 +58,7 @@ public class DocLinksPublisher extends Publisher {
     }
 
     @Override
-    public Descriptor<Publisher> getDescriptor() {
+    public BuildStepDescriptor<Publisher> getDescriptor() {
         return DESCRIPTOR;
     }
 
@@ -132,7 +132,7 @@ public class DocLinksPublisher extends Publisher {
         /**
          * check to see if directory is valid and exists.
          */
-        public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject project, 
+        public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String dir) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
             return DocLinksUtils.validateDirectory(project, dir);
@@ -141,7 +141,7 @@ public class DocLinksPublisher extends Publisher {
         /**
          * check to see if file exists.
          */
-        public FormValidation doCheckFile(@AncestorInPath final AbstractProject project, 
+        public FormValidation doCheckFile(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String dir, @QueryParameter final String file)
                 throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);

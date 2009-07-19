@@ -133,7 +133,7 @@ public class DocLinksMavenReporter extends MavenReporter {
         /**
          * check to see if directory is valid and exists.
          */
-        public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject project, @QueryParameter 
+        public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter
                 final String dir) throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
             return DocLinksUtils.validateDirectory(project, dir);
@@ -142,7 +142,7 @@ public class DocLinksMavenReporter extends MavenReporter {
         /**
          * check to see if file exists.
          */
-        public FormValidation doCheckFile(@AncestorInPath final AbstractProject project,
+        public FormValidation doCheckFile(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String dir, @QueryParameter final String file)
                 throws IOException, ServletException {
             Hudson.getInstance().checkPermission(Hudson.ADMINISTER);

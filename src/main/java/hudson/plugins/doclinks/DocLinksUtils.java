@@ -22,7 +22,7 @@ public final class DocLinksUtils {
 
     public static void log(final PrintStream logger, final String message) {
         final StringBuilder builder = new StringBuilder();
-        builder.append("[").append(Constants.PLUGIN_NAME).append("] ").append(message);
+        builder.append('[').append(Constants.PLUGIN_NAME).append("] ").append(message);
         logger.println(builder.toString());
     }
 
@@ -68,7 +68,7 @@ public final class DocLinksUtils {
         return FormValidation.ok();
     }
 
-    public static FormValidation validateDirectory(final AbstractProject project, final String directory)
+    public static FormValidation validateDirectory(final AbstractProject<?, ?> project, final String directory)
             throws IOException {
         final String dir = Util.fixEmptyAndTrim(directory);
         if (!DocLinksUtils.isValidDirectory(dir)) {
@@ -78,7 +78,7 @@ public final class DocLinksUtils {
         return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
     }
 
-    public static FormValidation validateFile(final AbstractProject project, final String directory, final String file)
+    public static FormValidation validateFile(final AbstractProject<?, ?> project, final String directory, final String file)
             throws IOException {
         final String f = Util.fixEmptyAndTrim(file);
         if (f == null) {
@@ -101,13 +101,14 @@ public final class DocLinksUtils {
         if (!DocLinksUtils.isValidDirectory(directory)) {
             final String cause = Messages.DocLinksUtils_DirectoryInvalid();
             DocLinksUtils.log(logger, Messages.DocLinksUtils_SkipDocument(doc.getTitle(), cause));
-            throw new IOException();
+            throw new IOException("directory is invalid.");
         }
 
         final FilePath docDir = (directory != null) ? ws.child(directory) : ws;
         if (!docDir.exists()) {
             final String cause = Messages.DocLinksUtils_DirectoryNotExist(docDir.getName());
             DocLinksUtils.log(logger, Messages.DocLinksUtils_SkipDocument(doc.getTitle(), cause));
+            throw new IOException("docDir does not exist.");
         }
 
         final FilePath target = new FilePath(docLinksDir, String.valueOf(doc.getId()));
