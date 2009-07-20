@@ -78,8 +78,8 @@ public final class DocLinksUtils {
         return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
     }
 
-    public static FormValidation validateFile(final AbstractProject<?, ?> project, final String directory, final String file)
-            throws IOException {
+    public static FormValidation validateFile(final AbstractProject<?, ?> project, final String directory,
+            final String file) throws IOException {
         final String f = Util.fixEmptyAndTrim(file);
         if (f == null) {
             FormValidation.ok();

@@ -9,7 +9,7 @@ import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- *
+ * Document Model.
  * @author Seiji Sogabe
  */
 public class Document implements Serializable {
