@@ -11,7 +11,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
 import hudson.model.Descriptor.FormException;
-import hudson.model.Hudson;
+import hudson.model.Job;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Publisher;
@@ -124,8 +124,9 @@ public class DocLinksPublisher extends Recorder {
         /**
          * check to see if title is not null.
          */
-        public FormValidation doCheckTitle(@QueryParameter final String title) throws IOException, ServletException {
-            Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+        public FormValidation doCheckTitle(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String title) throws IOException, ServletException {
+            project.checkPermission(Job.CONFIGURE);
             return DocLinksUtils.validateTitle(title);
         }
 
@@ -134,7 +135,7 @@ public class DocLinksPublisher extends Recorder {
          */
         public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String dir) throws IOException, ServletException {
-            Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+            project.checkPermission(Job.CONFIGURE);
             return DocLinksUtils.validateDirectory(project, dir);
         }
 
@@ -144,7 +145,7 @@ public class DocLinksPublisher extends Recorder {
         public FormValidation doCheckFile(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String dir, @QueryParameter final String file)
                 throws IOException, ServletException {
-            Hudson.getInstance().checkPermission(Hudson.ADMINISTER);
+            project.checkPermission(Job.CONFIGURE);
             return DocLinksUtils.validateFile(project, dir, file);
         }
 
