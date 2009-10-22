@@ -84,7 +84,7 @@ public class DocLinksMavenReporter extends MavenReporter {
             return true;
         }
 
-        final FilePath ws = build.getParent().getWorkspace();
+        final FilePath ws = build.getWorkspace();
         final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getParent()));
 
         try {

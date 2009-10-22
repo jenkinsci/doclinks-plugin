@@ -74,7 +74,7 @@ public final class DocLinksUtils {
         if (!DocLinksUtils.isValidDirectory(dir)) {
             return FormValidation.error(Messages.DocLinksUtils_DirectoryInvalid());
         }
-        final FilePath ws = project.getWorkspace();
+        final FilePath ws = project.getSomeWorkspace();
         return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
     }
 
@@ -85,7 +85,7 @@ public final class DocLinksUtils {
             FormValidation.ok();
         }
         // job has not built yet
-        final FilePath ws = project.getWorkspace();
+        final FilePath ws = project.getSomeWorkspace();
         if (ws == null) {
             return FormValidation.ok();
         }

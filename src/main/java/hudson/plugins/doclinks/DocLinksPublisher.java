@@ -14,6 +14,7 @@ import hudson.model.Descriptor.FormException;
 import hudson.model.Job;
 import hudson.model.Result;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
@@ -71,6 +72,10 @@ public class DocLinksPublisher extends Recorder {
         return new DocLinksAction(project, map);
     }
 
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
+
     @Override
     public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
             throws InterruptedException, IOException {
@@ -81,7 +86,7 @@ public class DocLinksPublisher extends Recorder {
             return true;
         }
 
-        final FilePath ws = build.getParent().getWorkspace();
+        final FilePath ws = build.getWorkspace();
         final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getProject()));
 
         try {
