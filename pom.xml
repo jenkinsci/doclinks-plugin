@@ -13,7 +13,7 @@
     <packaging>hpi</packaging>
     <name>Hudson DocLinks plugin</name>
     <description>This plugin allows you to publish documents which are created in the build steps.</description>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
     <url>http://wiki.hudson-ci.org/display/HUDSON/DocLinks+Plugin</url>
 
     <developers>
@@ -104,5 +104,11 @@
             </plugin>
         </plugins>
     </reporting>
+
+  <scm>
+    <connection>scm:svn:https://guest@svn.dev.java.net/svn/hudson/tags/doclinks-0.3</connection>
+    <developerConnection>scm:svn:https://svn.dev.java.net/svn/hudson/tags/doclinks-0.3</developerConnection>
+    <url>https://hudson.dev.java.net/source/browse/hudson/tags/doclinks-0.3</url>
+  </scm>
 </project>
 
