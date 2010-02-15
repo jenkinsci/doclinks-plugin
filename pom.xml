@@ -13,8 +13,16 @@
     <packaging>hpi</packaging>
     <name>Hudson DocLinks plugin</name>
     <description>This plugin allows you to publish documents which are created in the build steps.</description>
-    <version>0.2.3-SNAPSHOT</version>
+    <version>0.3-SNAPSHOT</version>
     <url>http://wiki.hudson-ci.org/display/HUDSON/DocLinks+Plugin</url>
+
+    <developers>
+        <developer>
+            <id>sogabe</id>
+            <name>Seiji Sogabe</name>
+            <email>sogabe@dev.java.net</email>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
