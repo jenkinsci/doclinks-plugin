@@ -1,10 +1,13 @@
 package hudson.plugins.doclinks;
 
+import hudson.FilePath;
 import hudson.Util;
 import hudson.maven.MavenModule;
 import hudson.model.AbstractItem;
 import hudson.plugins.doclinks.m2.DocLinksMavenReporter;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.io.Serializable;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -64,6 +67,28 @@ public class Document implements Serializable {
     public boolean hasResources(final MavenModule module) {
         final File docLinksDir = DocLinksMavenReporter.getDocLinksDir(module);
         return isDocumentExits(docLinksDir);
+    }
+
+    public void publish(FilePath origin, FilePath dest, PrintStream logger)
+            throws IOException, InterruptedException {
+
+        String dir = getDirectory();
+        if (!DocLinksUtils.isValidDirectory(dir)) {
+            String cause = Messages.DocLinksUtils_DirectoryInvalid();
+            DocLinksUtils.log(logger, Messages.Document_SkipDocument(getTitle(), cause));
+            throw new IOException("directory is invalid.");
+        }
+
+        FilePath docDir = (dir != null) ? origin.child(dir) : origin;
+        if (!docDir.exists()) {
+            String cause = Messages.DocLinksUtils_DirectoryNotExist(docDir.getName());
+            DocLinksUtils.log(logger, Messages.Document_SkipDocument(getTitle(), cause));
+            throw new IOException("docDir does not exist.");
+        }
+
+        FilePath targetDir = new FilePath(dest, String.valueOf(getId()));
+        DocLinksUtils.log(logger, Messages.Document_CopyDocument(getTitle(), targetDir.getName()));
+        docDir.copyRecursiveTo("**/*", targetDir);
     }
 
     private boolean isDocumentExits(final File docLinksDir) {

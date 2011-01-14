@@ -94,26 +94,4 @@ public final class DocLinksUtils {
         return targetDir.validateRelativePath(file, true, true);
     }
 
-    public static void publishDocument(final Document doc, final FilePath ws, final FilePath docLinksDir, 
-            final PrintStream logger) throws IOException, InterruptedException {
-
-        final String directory = doc.getDirectory();
-        if (!DocLinksUtils.isValidDirectory(directory)) {
-            final String cause = Messages.DocLinksUtils_DirectoryInvalid();
-            DocLinksUtils.log(logger, Messages.DocLinksUtils_SkipDocument(doc.getTitle(), cause));
-            throw new IOException("directory is invalid.");
-        }
-
-        final FilePath docDir = (directory != null) ? ws.child(directory) : ws;
-        if (!docDir.exists()) {
-            final String cause = Messages.DocLinksUtils_DirectoryNotExist(docDir.getName());
-            DocLinksUtils.log(logger, Messages.DocLinksUtils_SkipDocument(doc.getTitle(), cause));
-            throw new IOException("docDir does not exist.");
-        }
-
-        final FilePath target = new FilePath(docLinksDir, String.valueOf(doc.getId()));
-        DocLinksUtils.log(logger, Messages.DocLinksUtils_CopyDocument(doc.getTitle(), target.getName()));
-        docDir.copyRecursiveTo("**/*", target);
-    }
-
 }

@@ -90,7 +90,7 @@ public class DocLinksMavenReporter extends MavenReporter {
         try {
             docLinksDir.deleteRecursive();
             for (final Document doc : documents) {
-                DocLinksUtils.publishDocument(doc, ws, docLinksDir, logger);
+                doc.publish(ws, docLinksDir, logger);
             }
         } catch (final IOException e) {
             Util.displayIOException(e, listener);
