@@ -13,7 +13,7 @@
     <packaging>hpi</packaging>
     <name>Hudson DocLinks plugin</name>
     <description>This plugin allows you to publish documents which are created in the build steps.</description>
-    <version>0.4</version>
+    <version>0.5-SNAPSHOT</version>
     <url>http://wiki.hudson-ci.org/display/HUDSON/DocLinks+Plugin</url>
 
     <developers>
