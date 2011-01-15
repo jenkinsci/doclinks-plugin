@@ -12,14 +12,18 @@
           <f:textbox name="doc.description" value="${doc.description}" />
         </f:entry>
 
-        <f:entry title="${%Directory}"
+        <f:entry title="${%Directory to archive}"
                  description="${%directory.description}">
           <f:textbox name="doc.directory" value="${doc.directory}"
                      onchange="Form.findMatchingInput(this,'doc.file').onchange()"
                      checkUrl="'descriptorByName/DocLinksMavenReporter/checkDirectory?dir='+encodeURIComponent(this.value)" />
+          <label>
+             <f:checkbox name="doc.recursive" checked="${doc.recursive}" />
+             ${%archive recursively}
+          </label>
         </f:entry>
 
-        <f:entry title="${%File}"
+        <f:entry title="${%Index file}"
                  description="${%file.description}" >
           <f:textbox name="doc.file" value="${doc.file}"
                      checkUrl="'descriptorByName/DocLinksMavenReporter/checkFile?dir=' + encodeURIComponent(Form.findMatchingInput(this, 'doc.directory').value) + '&amp;file='+encodeURIComponent(this.value)" />

@@ -111,7 +111,7 @@ public class DocLinksPublisher extends Recorder {
 
         @Override
         public Publisher newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
-            final List<Document> docs = req.bindParametersToList(Document.class, "doc.");
+            final List<Document> docs = req.bindJSONToList(Document.class, formData.get("docs"));
             // assign id for new documents;
             for (final Document doc : docs) {
                 if (doc.getId() == null) {

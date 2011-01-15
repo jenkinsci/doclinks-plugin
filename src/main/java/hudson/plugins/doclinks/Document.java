@@ -22,15 +22,20 @@ public class Document implements Serializable {
     private final String title;
     private final String description;
     private final String directory;
+    /**
+     * @since 0.4
+     */
+    private final boolean recursive;
     private final String file;
     private String id;
 
     @DataBoundConstructor
-    public Document(final String title, final String description, final String directory, final String file,
-            final String id) {
+    public Document(String title, String description, String directory, boolean recursive, String file,
+            String id) {
         this.title = Util.fixEmptyAndTrim(title);
         this.description = Util.fixEmptyAndTrim(description);
         this.directory = Util.fixEmptyAndTrim(directory);
+        this.recursive = recursive;
         this.file = Util.fixEmptyAndTrim(file);
         this.id = Util.fixEmptyAndTrim(id);
     }
@@ -43,6 +48,13 @@ public class Document implements Serializable {
         return directory;
     }
 
+    /**
+     * @since 1.4
+     */
+    public boolean isRecursive(){
+        return recursive;
+    }
+    
     public String getFile() {
         return file;
     }
@@ -88,7 +100,12 @@ public class Document implements Serializable {
 
         FilePath targetDir = new FilePath(dest, String.valueOf(getId()));
         DocLinksUtils.log(logger, Messages.Document_CopyDocument(getTitle(), targetDir.getName()));
-        docDir.copyRecursiveTo("**/*", targetDir);
+
+        if (isRecursive()) {
+            docDir.copyRecursiveTo("**/*", targetDir);
+        } else {
+            docDir.copyRecursiveTo("*", targetDir);
+        }
     }
 
     private boolean isDocumentExits(final File docLinksDir) {
