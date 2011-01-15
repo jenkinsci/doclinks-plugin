@@ -90,9 +90,11 @@ public class DocLinksPublisher extends Recorder {
         final FilePath docLinksDir = new FilePath(getDocLinksDir(build.getProject()));
 
         try {
-            docLinksDir.deleteRecursive();
-            for (final Document doc : documents) {
-                doc.publish(ws, docLinksDir, logger);
+            synchronized (this) {
+                docLinksDir.deleteRecursive();
+                for (final Document doc : documents) {
+                    doc.publish(ws, docLinksDir, logger);
+                }
             }
         } catch (final IOException e) {
             Util.displayIOException(e, listener);
