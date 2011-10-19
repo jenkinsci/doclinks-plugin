@@ -12,7 +12,7 @@
 
   <groupId>org.jenkinsci.plugins</groupId>
   <artifactId>doclinks</artifactId>
-  <version>0.5</version>
+  <version>0.6-SNAPSHOT</version>
   <packaging>hpi</packaging>
 
   <name>Jenkins DocLinks plugin</name>
