@@ -58,7 +58,6 @@ public abstract class ArtifactDocLinksHudsonTestCase extends HudsonTestCase {
     
     public WebClient createWebClient() {
         WebClient wc = new WebClient();
-        wc.setTimeout(3000);
         return wc;
     }
     
