@@ -264,4 +264,21 @@ public class ArtifactsDocLinksConfigHudsonTest extends ArtifactDocLinksHudsonTes
                 descriptor.doCheckInitialPath("**/*.zip", "nosuchdir", p).kind
         );
     }
+    
+    public void testDescriptor_doCheckInitialPathWithoutDirectoryEntry() throws Exception {
+        DescriptorImpl descriptor = getDescriptor();
+        FreeStyleProject p = createFreeStyleProject();
+        
+        // build with an artifact.
+        p.getBuildersList().clear();
+        p.getBuildersList().add(new CleanupBuilder());
+        p.getBuildersList().add(new TestZipBuilder("artifact1.zip", true));
+        p.getPublishersList().clear();
+        p.getPublishersList().add(new ArtifactArchiver("artifact1.zip", "", false));
+        assertBuildStatusSuccess(p.scheduleBuild2(0).get());
+        assertEquals(
+                FormValidation.Kind.OK,
+                descriptor.doCheckInitialPath("**/*.zip", "subdir", p).kind
+        );
+    }
 }

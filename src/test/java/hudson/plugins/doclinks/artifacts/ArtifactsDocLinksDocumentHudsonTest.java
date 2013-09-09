@@ -175,6 +175,29 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
         }
     }
     
+    public void testIndexFileWithoutDirectoryEntry() throws Exception {
+        WebClient wc = getWebClient();
+        
+        FreeStyleProject p = createFreeStyleProject();
+        
+        p.getBuildersList().clear();
+        p.getBuildersList().add(new TestZipBuilder("artifact1.zip", true));
+        p.getPublishersList().clear();
+        p.getPublishersList().add(new ArtifactArchiver("artifact1.zip", "", false));
+        p.getPublishersList().add(new ArtifactsDocLinksPublisher(Arrays.asList(
+                new ArtifactsDocLinksConfig("Test", "artifact1.zip", null, null)
+        )));
+        p.save();
+        
+        FreeStyleBuild build = p.scheduleBuild2(0).get(BUILD_TIMEOUT, TimeUnit.SECONDS);
+        ArtifactsDocLinksAction action = build.getAction(ArtifactsDocLinksAction.class);
+        ArtifactsDocLinksDocument doc = action.getArtifactsDocLinksDocumentList().get(0);
+        
+        // index.html
+        HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir", action.getUrlName(), doc.getUrl()));
+        assertTrue(page.asText(), page.asText().contains("Page in a sub directory."));
+    }
+    
     public void testLinksInDocuments() throws Exception {
         WebClient wc = getWebClient();
         

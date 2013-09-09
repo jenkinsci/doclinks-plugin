@@ -27,6 +27,7 @@ package hudson.plugins.doclinks.artifacts;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -235,12 +236,9 @@ public class ArtifactsDocLinksDocument implements ModelObject {
      * @throws IOException
      */
     private ZipEntry getFileEntry(ZipFile zip, String path) throws IOException {
-        if (!StringUtils.isEmpty(path)) {
+        if (!isDirectory(zip, path)) {
             ZipEntry entry = zip.getEntry(path);
-            if (entry == null) {
-                return null;
-            }
-            if (!isDirectory(zip, entry)) {
+            if (entry != null) {
                 return entry;
             }
         }
@@ -268,7 +266,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
      * @return
      * @throws IOException
      */
-    private boolean isDirectory(ZipFile zip, ZipEntry entry) throws IOException {
+    private static boolean isDirectory(ZipFile zip, ZipEntry entry) throws IOException {
         if (entry.isDirectory()) {
             return true;
         }
@@ -286,14 +284,31 @@ public class ArtifactsDocLinksDocument implements ModelObject {
      * @return
      * @throws IOException
      */
-    private boolean isDirectory(ZipFile zip, String path) throws IOException {
-        if (StringUtils.isEmpty(path)) {
+    public static boolean isDirectory(ZipFile zip, String path) throws IOException {
+        if (StringUtils.isEmpty(path) || "/".equals(path)) {
             return true;
         }
-        ZipEntry entry = zip.getEntry(path);
-        if (entry == null) {
-            return false;
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
         }
-        return isDirectory(zip, entry);
+        
+        {
+            ZipEntry entry = zip.getEntry(path);
+            if (entry != null) {
+                return isDirectory(zip, entry);
+            }
+        }
+        
+        String dirPrefix = String.format("%s/", path);
+        
+        Enumeration<? extends ZipEntry> entryEnum = zip.entries();
+        while (entryEnum.hasMoreElements()) {
+            ZipEntry entry = entryEnum.nextElement();
+            if (entry.getName().startsWith(dirPrefix)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

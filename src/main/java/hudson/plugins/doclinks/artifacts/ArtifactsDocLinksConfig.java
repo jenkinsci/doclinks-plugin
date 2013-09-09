@@ -249,7 +249,10 @@ public class ArtifactsDocLinksConfig implements Describable<ArtifactsDocLinksCon
                     ZipFile file = null;
                     try {
                         file = new ZipFile(artifact);
-                        if (file.getEntry(value) == null) {
+                        if (
+                                !ArtifactsDocLinksDocument.isDirectory(file, value)
+                                && file.getEntry(value) == null
+                        ) {
                             return FormValidation.warning(
                                     Messages.ArtifactsDocLinksConfig_initialPath_notfound(artifactName, build.getFullDisplayName())
                             );
