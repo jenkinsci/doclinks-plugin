@@ -33,6 +33,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.plexus.util.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
@@ -157,25 +158,25 @@ public class ArtifactsDocLinksDocument implements ModelObject {
         AbstractBuild<?,?> build = getBuild(req);
         if (build == null) {
             LOGGER.warning(String.format("No build found for url %s", req.getRequestURI()));
-            resp.sendError(404);
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         
         File artifact = new File(build.getArtifactsDir(), getArtifactName());
         if (!artifact.exists()) {
             LOGGER.warning(String.format("Artifact does not exists: %s for %s", getArtifactName(), build.getFullDisplayName()));
-            resp.sendError(404);
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         if (!artifact.isFile()) {
             LOGGER.warning(String.format("Artifact is not a file: %s for %s", getArtifactName(), build.getFullDisplayName()));
-            resp.sendError(403);
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
         
         if (req.getDateHeader("If-Modified-Since") >= 0) {
             if (req.getDateHeader("If-Modified-Since") >= artifact.lastModified()) {
-                resp.sendError(304);
+                resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 return;
             }
         }
@@ -193,7 +194,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
                 zip = new ZipFile(artifact);
             } catch (ZipException e) {
                 LOGGER.warning(String.format("Artifact is not a zip file: %s for %s", getArtifactName(), build.getFullDisplayName()));
-                resp.sendError(403);
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
             
@@ -206,7 +207,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
             
             ZipEntry entry = getFileEntry(zip, path);
             if (entry == null) {
-                resp.sendError(404);
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
             
