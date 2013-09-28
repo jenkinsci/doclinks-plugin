@@ -56,6 +56,10 @@
       <name>Seiji Sogabe</name>
       <email>s.sogabe@gmail.com</email>
     </developer>
+    <developer>
+      <id>ikedam</id>
+      <name>IKEDA Yasuyuki</name>
+    </developer>
   </developers>
 
   <properties>
