@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
+import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -125,6 +126,9 @@ public class DocLinksPublisher extends Recorder {
 
         @Override
         public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
+            if (Jenkins.getInstance().getPlugin("maven-plugin") == null) {
+                return true;
+            }
             return !AbstractMavenProject.class.isAssignableFrom(jobType);
         }
 
