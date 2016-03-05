@@ -40,7 +40,7 @@ public class DocLinksMavenReporter extends MavenReporter {
 
     private static final long serialVersionUID = 1L;
 
-    @Extension
+    @Extension(optional=true)
     public static final MavenReporterDescriptor DESCRIPTOR = new DocLinksMavenReporterDescriptor();
 
     private final List<Document> documents;
