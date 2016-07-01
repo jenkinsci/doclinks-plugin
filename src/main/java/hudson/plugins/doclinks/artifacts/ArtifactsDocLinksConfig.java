@@ -175,7 +175,11 @@ public class ArtifactsDocLinksConfig implements Describable<ArtifactsDocLinksCon
                         break;
                     }
                     File dir = b.getArtifactsDir();
-                    if (!dir.exists() || !dir.isDirectory() || dir.listFiles().length <= 0) {
+                    if (!dir.exists() || !dir.isDirectory()) {
+                        continue;
+                    }
+                    File[] files = dir.listFiles();
+                    if (files == null || files.length <= 0) {
                         continue;
                     }
                     buildList.add(b);
