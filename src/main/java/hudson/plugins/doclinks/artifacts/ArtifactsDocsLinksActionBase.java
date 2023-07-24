@@ -7,7 +7,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 
 /**
- * Common base class for {@link ArtifactDocsLinksAction} and {@link ArtifactDocLinksProjectAction}.
+ * Common base class for {@link ArtifactsDocLinksAction} and {@link ArtifactsDocLinksProjectAction}.
  */
 public abstract class ArtifactsDocsLinksActionBase implements Action {
     /**

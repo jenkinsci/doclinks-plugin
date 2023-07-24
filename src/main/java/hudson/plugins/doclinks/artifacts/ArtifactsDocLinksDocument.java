@@ -280,7 +280,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     
     /**
      * @param zip
-     * @param entry
+     * @param path
      * @return
      * @throws IOException
      */
