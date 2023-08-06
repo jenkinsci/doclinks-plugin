@@ -2,7 +2,7 @@ package hudson.plugins.doclinks;
 
 /**
  * Global constants.
- * 
+ *
  * @author Seiji Sogabe
  */
 public final class Constants {

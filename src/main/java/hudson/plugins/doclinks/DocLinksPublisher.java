@@ -34,7 +34,7 @@ import org.kohsuke.stapler.StaplerRequest;
 
 /**
  * Saves documents which are created in build step.
- * 
+ *
  * @author Seiji Sogabe
  */
 public class DocLinksPublisher extends Recorder {
@@ -73,6 +73,7 @@ public class DocLinksPublisher extends Recorder {
         return new DocLinksAction(project, map);
     }
 
+    @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
     }
@@ -105,7 +106,7 @@ public class DocLinksPublisher extends Recorder {
 
         return true;
     }
-  
+
     public static class DocLinksDescriptor extends BuildStepDescriptor<Publisher> {
 
         public DocLinksDescriptor() {
@@ -135,8 +136,9 @@ public class DocLinksPublisher extends Recorder {
         /**
          * check to see if title is not null.
          */
-        public FormValidation doCheckTitle(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String title) throws IOException, ServletException {
+        public FormValidation doCheckTitle(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String title)
+                throws IOException, ServletException {
             project.checkPermission(Job.CONFIGURE);
             return DocLinksUtils.validateTitle(title);
         }
@@ -144,8 +146,9 @@ public class DocLinksPublisher extends Recorder {
         /**
          * check to see if directory is valid and exists.
          */
-        public FormValidation doCheckDirectory(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String dir) throws IOException, ServletException {
+        public FormValidation doCheckDirectory(
+                @AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String dir)
+                throws IOException, ServletException {
             project.checkPermission(Job.CONFIGURE);
             return DocLinksUtils.validateDirectory(project, dir);
         }
@@ -153,8 +156,10 @@ public class DocLinksPublisher extends Recorder {
         /**
          * check to see if file exists.
          */
-        public FormValidation doCheckFile(@AncestorInPath final AbstractProject<?, ?> project,
-                @QueryParameter final String dir, @QueryParameter final String file)
+        public FormValidation doCheckFile(
+                @AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String dir,
+                @QueryParameter final String file)
                 throws IOException, ServletException {
             project.checkPermission(Job.CONFIGURE);
             return DocLinksUtils.validateFile(project, dir, file);

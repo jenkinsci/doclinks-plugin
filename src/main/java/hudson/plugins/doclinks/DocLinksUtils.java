@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 public final class DocLinksUtils {
 
     private DocLinksUtils() {
-        // 
+        //
     }
 
     public static void log(final PrintStream logger, final String message) {
@@ -78,8 +78,8 @@ public final class DocLinksUtils {
         return (ws != null) ? ws.validateRelativeDirectory(dir) : FormValidation.ok();
     }
 
-    public static FormValidation validateFile(final AbstractProject<?, ?> project, final String directory,
-            final String file) throws IOException {
+    public static FormValidation validateFile(
+            final AbstractProject<?, ?> project, final String directory, final String file) throws IOException {
         final String f = Util.fixEmptyAndTrim(file);
         if (f == null) {
             FormValidation.ok();
@@ -93,5 +93,4 @@ public final class DocLinksUtils {
         final FilePath targetDir = (dir != null) ? new FilePath(ws, dir) : ws;
         return targetDir.validateRelativePath(file, true, true);
     }
-
 }

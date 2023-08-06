@@ -26,12 +26,12 @@ public class Document implements Serializable {
      * @since 0.4
      */
     private final boolean recursive;
+
     private final String file;
     private String id;
 
     @DataBoundConstructor
-    public Document(String title, String description, String directory, boolean recursive, String file,
-            String id) {
+    public Document(String title, String description, String directory, boolean recursive, String file, String id) {
         this.title = Util.fixEmptyAndTrim(title);
         this.description = Util.fixEmptyAndTrim(description);
         this.directory = Util.fixEmptyAndTrim(directory);
@@ -51,10 +51,10 @@ public class Document implements Serializable {
     /**
      * @since 1.4
      */
-    public boolean isRecursive(){
+    public boolean isRecursive() {
         return recursive;
     }
-    
+
     public String getFile() {
         return file;
     }
@@ -81,8 +81,7 @@ public class Document implements Serializable {
         return isDocumentExits(docLinksDir);
     }
 
-    public void publish(FilePath origin, FilePath dest, PrintStream logger)
-            throws IOException, InterruptedException {
+    public void publish(FilePath origin, FilePath dest, PrintStream logger) throws IOException, InterruptedException {
 
         String dir = getDirectory();
         if (!DocLinksUtils.isValidDirectory(dir)) {

@@ -1,18 +1,18 @@
 /*
  * The MIT License
- * 
+ *
  * Copyright (c) 2013 IKEDA Yasuyuki
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,6 +24,10 @@
 
 package hudson.plugins.doclinks.artifacts;
 
+import hudson.Util;
+import hudson.model.AbstractBuild;
+import hudson.model.AbstractProject;
+import hudson.model.ModelObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,22 +36,15 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
-
 import org.codehaus.plexus.util.StringUtils;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 
-import hudson.Util;
-import hudson.model.ModelObject;
-import hudson.model.AbstractBuild;
-import hudson.model.AbstractProject;
-
 /**
  * Holds a link to an artifact published as a document.
- * 
+ *
  * The build that holds the artifact is resolved by {@link StaplerRequest#findAncestorObject(Class)}
  * at runtime.
  */
@@ -60,7 +57,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     public String getArtifactName() {
         return artifactName;
     }
-    
+
     private String title;
     /**
      * @return the title
@@ -68,7 +65,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     public String getTitle() {
         return title;
     }
-    
+
     private String initialPath;
     /**
      * @return the initialPath
@@ -76,7 +73,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     public String getInitialPath() {
         return initialPath;
     }
-    
+
     private String indexFile;
     /**
      * @return the indexFile
@@ -84,7 +81,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     public String getIndexFile() {
         return indexFile;
     }
-    
+
     private String id;
     /**
      * @return the id used in URL.
@@ -92,16 +89,16 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     public String getId() {
         return id;
     }
-    
+
     /**
      * @return the URL for the initial path.
      */
     public String getUrl() {
         return (getInitialPath() != null)
-                ?String.format("%s/%s", Util.rawEncode(getId()), getInitialPath())
-                :Util.rawEncode(getId());
+                ? String.format("%s/%s", Util.rawEncode(getId()), getInitialPath())
+                : Util.rawEncode(getId());
     }
-    
+
     /**
      * @param id
      * @param artifactName
@@ -109,15 +106,15 @@ public class ArtifactsDocLinksDocument implements ModelObject {
      * @param initialPath
      * @param indexFile
      */
-    public ArtifactsDocLinksDocument(String id, String artifactName, String title, String initialPath, String indexFile) {
+    public ArtifactsDocLinksDocument(
+            String id, String artifactName, String title, String initialPath, String indexFile) {
         this.id = id;
         this.artifactName = artifactName;
         this.title = title;
         this.initialPath = initialPath;
         this.indexFile = indexFile;
     }
-    
-    
+
     /**
      * @return
      * @see hudson.model.ModelObject#getDisplayName()
@@ -126,62 +123,64 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     public String getDisplayName() {
         return getTitle();
     }
-    
+
     /**
      * Resolves the build containing the artifact by {@link StaplerRequest#findAncestorObject(Class)}
-     * 
+     *
      * @param req
      * @return
      */
     protected AbstractBuild<?, ?> getBuild(StaplerRequest req) {
-        AbstractBuild<?,?> build = req.findAncestorObject(AbstractBuild.class);
+        AbstractBuild<?, ?> build = req.findAncestorObject(AbstractBuild.class);
         if (build != null) {
             return build;
         }
-        
-        AbstractProject<?,?> project = req.findAncestorObject(AbstractProject.class);
+
+        AbstractProject<?, ?> project = req.findAncestorObject(AbstractProject.class);
         if (project != null) {
             return project.getLastSuccessfulBuild();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Send a contents of the artifact that is requested via HTTP.
-     * 
+     *
      * @param req
      * @param resp
      * @throws IOException
-     * @throws ServletException 
+     * @throws ServletException
      */
     public void doDynamic(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
-        AbstractBuild<?,?> build = getBuild(req);
+        AbstractBuild<?, ?> build = getBuild(req);
         if (build == null) {
             LOGGER.warning(String.format("No build found for url %s", req.getRequestURI()));
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
-        
+
         File artifact = new File(build.getArtifactsDir(), getArtifactName());
         if (!artifact.exists()) {
-            LOGGER.warning(String.format("Artifact does not exists: %s for %s", getArtifactName(), build.getFullDisplayName()));
+            LOGGER.warning(String.format(
+                    "Artifact does not exists: %s for %s", getArtifactName(), build.getFullDisplayName()));
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
         if (!artifact.isFile()) {
-            LOGGER.warning(String.format("Artifact is not a file: %s for %s", getArtifactName(), build.getFullDisplayName()));
+            LOGGER.warning(
+                    String.format("Artifact is not a file: %s for %s", getArtifactName(), build.getFullDisplayName()));
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-        
+
         if (req.getDateHeader("If-Modified-Since") >= 0) {
             if (req.getDateHeader("If-Modified-Since") >= artifact.lastModified()) {
                 resp.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
                 return;
             }
         }
-        
+
         String path = req.getRestOfPath();
         if (path.startsWith("/")) {
             path = path.substring(1);
@@ -194,24 +193,25 @@ public class ArtifactsDocLinksDocument implements ModelObject {
             try {
                 zip = new ZipFile(artifact);
             } catch (ZipException e) {
-                LOGGER.warning(String.format("Artifact is not a zip file: %s for %s", getArtifactName(), build.getFullDisplayName()));
+                LOGGER.warning(String.format(
+                        "Artifact is not a zip file: %s for %s", getArtifactName(), build.getFullDisplayName()));
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
-            
-            if(path.length() > 0 && !req.getRequestURI().endsWith("/") && isDirectory(zip, path)) {
+
+            if (path.length() > 0 && !req.getRequestURI().endsWith("/") && isDirectory(zip, path)) {
                 // It seems that getRestOfPath() never contains trailing slash.
                 // So we should see getRequestURI().
                 resp.sendRedirect(String.format("%s/", req.getRequestURI()));
                 return;
             }
-            
+
             ZipEntry entry = getFileEntry(zip, path);
             if (entry == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-            
+
             InputStream is = null;
             try {
                 is = zip.getInputStream(entry);
@@ -228,7 +228,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
             }
         }
     }
-    
+
     /**
      * @param zip
      * @param path
@@ -242,24 +242,24 @@ public class ArtifactsDocLinksDocument implements ModelObject {
                 return entry;
             }
         }
-        
+
         String indexFile = getIndexFile();
         if (StringUtils.isEmpty(indexFile)) {
             indexFile = "index.html,index.htm";
         }
-        
-        for (String file: StringUtils.split(indexFile, ",")) {
+
+        for (String file : StringUtils.split(indexFile, ",")) {
             file = StringUtils.trim(file);
-            String filePath = StringUtils.isEmpty(path)?file:String.format("%s/%s", path, file);
+            String filePath = StringUtils.isEmpty(path) ? file : String.format("%s/%s", path, file);
             ZipEntry entry = zip.getEntry(filePath);
             if (entry != null && !isDirectory(zip, entry)) {
                 return entry;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
      * @param zip
      * @param entry
@@ -277,7 +277,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
         is.close();
         return false;
     }
-    
+
     /**
      * @param zip
      * @param path
@@ -291,16 +291,16 @@ public class ArtifactsDocLinksDocument implements ModelObject {
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
-        
+
         {
             ZipEntry entry = zip.getEntry(path);
             if (entry != null) {
                 return isDirectory(zip, entry);
             }
         }
-        
+
         String dirPrefix = String.format("%s/", path);
-        
+
         Enumeration<? extends ZipEntry> entryEnum = zip.entries();
         while (entryEnum.hasMoreElements()) {
             ZipEntry entry = entryEnum.nextElement();
@@ -308,7 +308,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
                 return true;
             }
         }
-        
+
         return false;
     }
 }
