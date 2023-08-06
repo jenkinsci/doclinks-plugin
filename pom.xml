@@ -10,7 +10,7 @@
 
   <groupId>org.jenkinsci.plugins</groupId>
   <artifactId>doclinks</artifactId>
-  <version>0.7</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>Jenkins DocLinks plugin</name>
   <description>This plugin allows you to publish documents which are created in the build steps.</description>
@@ -31,12 +31,12 @@
   <scm>
     <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
-    <tag>doclinks-0.7</tag>
+    <tag>${scmTag}</tag>
     <url>https://github.com/${gitHubRepo}</url>
   </scm>
 
   <properties>
-    <revision>0.7</revision>
+    <revision>0.8</revision>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.410</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
