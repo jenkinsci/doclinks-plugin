@@ -74,8 +74,8 @@ public class DocLinksAction implements Action {
         }
 
         final FilePath basePath = new FilePath(DocLinksPublisher.getDocLinksDir(project));
-        final DirectoryBrowserSupport dbs
-                = new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
+        final DirectoryBrowserSupport dbs =
+                new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
         // set indexfile
         if (doc.getFile() != null) {
             dbs.setIndexFileName(doc.getFile());
