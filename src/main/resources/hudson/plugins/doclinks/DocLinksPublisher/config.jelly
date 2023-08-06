@@ -16,7 +16,7 @@
         <f:entry title="${%Directory to archive}"
                  description="${%directory.description}">
           <f:textbox name="doc.directory" value="${doc.directory}"
-                     onchange="Form.findMatchingInput(this,'doc.file').onchange()"
+                     onchange="findMatchingFormInput(this,'doc.file').onchange()"
                      checkUrl="'descriptorByName/DocLinksPublisher/checkDirectory?dir='+encodeURIComponent(this.value)" />
           <label>
              <f:checkbox name="doc.recursive" checked="${doc.recursive}" />
@@ -27,7 +27,7 @@
         <f:entry title="${%Index file}"
                  description="${%indexfile.description}" >
           <f:textbox name="doc.file" value="${doc.file}"
-                     checkUrl="'descriptorByName/DocLinksPublisher/checkFile?dir=' + encodeURIComponent(Form.findMatchingInput(this, 'doc.directory').value) + '&amp;file='+encodeURIComponent(this.value)" />
+                     checkUrl="'descriptorByName/DocLinksPublisher/checkFile?dir=' + encodeURIComponent(findMatchingFormInput(this, 'doc.directory').value) + '&amp;file='+encodeURIComponent(this.value)" />
         </f:entry>
         <input name="doc.id" type="hidden" value="${doc.id}" />
 
