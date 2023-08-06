@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.util.DateUtil;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.Page;
+import org.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
@@ -66,7 +66,7 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
             ArtifactsDocLinksDocument doc = action.getArtifactsDocLinksDocumentList().get(0);
             
             HtmlPage page = wc.getPage(build, String.format("%s/%s", action.getUrlName(), doc.getUrl()));
-            assertTrue(page.asText(), page.asText().contains("Default top page."));
+            assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Default top page."));
         }
         
         {
@@ -84,7 +84,7 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
             ArtifactsDocLinksDocument doc = action.getArtifactsDocLinksDocumentList().get(0);
             
             HtmlPage page = wc.getPage(build, String.format("%s/%s", action.getUrlName(), doc.getUrl()));
-            assertTrue(page.asText(), page.asText().contains("Page in a sub directory."));
+            assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Page in a sub directory."));
         }
     }
     
@@ -109,13 +109,13 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
             {
                 // index.html
                 HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir", action.getUrlName(), doc.getUrl()));
-                assertTrue(page.asText(), page.asText().contains("Page in a sub directory."));
+                assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Page in a sub directory."));
             }
             
             {
                 // index.htm
                 HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir2/", action.getUrlName(), doc.getUrl()));
-                assertTrue(page.asText(), page.asText().contains("Page in a sub directory 2."));
+                assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Page in a sub directory 2."));
             }
         }
         
@@ -136,13 +136,13 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
             {
                 // index.html
                 HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir", action.getUrlName(), doc.getUrl()));
-                assertTrue(page.asText(), page.asText().contains("Page in a sub directory."));
+                assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Page in a sub directory."));
             }
             
             {
                 // index.htm
                 HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir2/", action.getUrlName(), doc.getUrl()));
-                assertTrue(page.asText(), page.asText().contains("Page in a sub directory 2."));
+                assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Page in a sub directory 2."));
             }
         }
         
@@ -164,13 +164,13 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
             {
                 // default.html
                 HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir", action.getUrlName(), doc.getUrl()));
-                assertTrue(page.asText(), page.asText().contains("Alternate page in a sub directory."));
+                assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Alternate page in a sub directory."));
             }
             
             {
                 // default.htm
                 HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir2/", action.getUrlName(), doc.getUrl()));
-                assertTrue(page.asText(), page.asText().contains("Alternate page in a sub directory 2."));
+                assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Alternate page in a sub directory 2."));
             }
         }
     }
@@ -195,7 +195,7 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
         
         // index.html
         HtmlPage page = wc.getPage(build, String.format("%s/%s/subdir", action.getUrlName(), doc.getUrl()));
-        assertTrue(page.asText(), page.asText().contains("Page in a sub directory."));
+        assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("Page in a sub directory."));
     }
     
     public void testLinksInDocuments() throws Exception {
@@ -216,7 +216,7 @@ public class ArtifactsDocLinksDocumentHudsonTest extends ArtifactDocLinksHudsonT
         ArtifactsDocLinksDocument doc = action.getArtifactsDocLinksDocumentList().get(0);
         
         HtmlPage page = wc.getPage(build, String.format("%s/%s/contents", action.getUrlName(), doc.getUrl()));
-        assertTrue(page.asText(), page.asText().contains("This is a updated text."));
+        assertTrue(page.asNormalizedText(), page.asNormalizedText().contains("This is a updated text."));
     }
     
     public void testLastModifiedSince() throws Exception {

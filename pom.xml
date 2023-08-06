@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -6,25 +6,26 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>2.9</version>
+    <version>4.71</version>
+    <relativePath />
   </parent>
 
   <groupId>org.jenkinsci.plugins</groupId>
   <artifactId>doclinks</artifactId>
-  <version>0.7-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
 
   <name>Jenkins DocLinks plugin</name>
   <description>This plugin allows you to publish documents which are created in the build steps.</description>
-  <url>http://wiki.jenkins-ci.org/display/JENKINS/DocLinks+Plugin</url>
+  <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/doclinks-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/doclinks-plugin.git</developerConnection>
-    <url>http://github.com/jenkinsci/doclinks-plugin</url>
+    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <tag>${scmTag}</tag>
+    <url>https://github.com/${gitHubRepo}</url>
   </scm>
 
-  <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
@@ -52,88 +53,47 @@
   </developers>
 
   <properties>
-    <jenkins.version>1.466</jenkins.version>
-    <jenkins-test-harness.version>1.466</jenkins-test-harness.version>
-    <java.level>5</java.level>
+    <revision>0.7</revision>
+    <changelist>-SNAPSHOT</changelist>
+    <jenkins.version>2.387.3</jenkins.version>
+    <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
+    <!-- TODO fix existing violations -->
+    <spotbugs.threshold>High</spotbugs.threshold>
   </properties>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <!-- jenkins-test-harness < 1.545 doesn't support concurrent tests. -->
-          <forkCount>1</forkCount>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>display-info</id>
-            <configuration>
-              <rules>
-                <bannedDependencies>
-                  <excludes>
-                    <!-- <exclude>org.sonatype.sisu:sisu-guice</exclude> -->
-                    <exclude>log4j:log4j:*:jar:compile</exclude>
-                    <exclude>log4j:log4j:*:jar:runtime</exclude>
-                    <exclude>commons-logging:commons-logging:*:jar:compile</exclude>
-                    <exclude>commons-logging:commons-logging:*:jar:runtime</exclude>
-                  </excludes>
-                </bannedDependencies>
-                <enforceBytecodeVersion>
-                  <excludes combine.children="append">
-                    <!-- dependencies via jenkins-core-1.466 -->
-                    <exclude>org.kohsuke:asm3</exclude>
-                  </excludes>
-                </enforceBytecodeVersion>
-              </rules>
-          </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <locales>ja</locales>
-          <inputEncoding>${project.build.sourceEncoding}</inputEncoding>
-          <outputEncoding>${project.build.outputEncoding}</outputEncoding>
-        </configuration>
-      </plugin>
-    </plugins>
-    <extensions>
-      <extension>
-        <groupId>org.jvnet.wagon-svn</groupId>
-        <artifactId>wagon-svn</artifactId>
-        <version>1.9</version>
-      </extension>
-    </extensions>
-  </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+        <artifactId>bom-2.387.x</artifactId>
+        <version>2258.v522c10b_d4695</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
-      <version>1.466</version>
+      <version>3.22</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>matrix-project</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>commons-httpclient3-api</artifactId>
+      <version>3.1-3</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <configuration>
-          <findbugsXmlOutput>true</findbugsXmlOutput>
-          <xmlOutput>true</xmlOutput>
-          <debug>false</debug>
-          <effort>Max</effort>
-          <onlyAnalyze>hudson.plugins.*</onlyAnalyze>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -144,15 +104,6 @@
           <encoding>${project.build.sourceEncoding}</encoding>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <configuration>
-          <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
-          <targetJdk>1.${java.level}</targetJdk>
-        </configuration>
-      </plugin>
     </plugins>
   </reporting>
-
 </project>

@@ -43,8 +43,8 @@ import hudson.plugins.doclinks.artifacts.testtools.TestFileBuilder;
 import hudson.plugins.doclinks.artifacts.testtools.TestZipBuilder;
 import hudson.tasks.ArtifactArchiver;
 
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlAnchor;
+import org.htmlunit.html.HtmlPage;
 
 /**
  *
@@ -110,7 +110,7 @@ public class ArtifactsDocLinksPublisherHudsonTest extends ArtifactDocLinksHudson
         }
         
         HtmlPage page = wc.getPage(build, url);
-        assertTrue(page.asText(), page.asText().contains(content));
+        assertTrue(page.asNormalizedText(), page.asNormalizedText().contains(content));
     }
 
     protected void assertLatestDocumentContains(AbstractBuild<?,?> build, int index, String path, String content) throws IOException, SAXException
@@ -144,7 +144,7 @@ public class ArtifactsDocLinksPublisherHudsonTest extends ArtifactDocLinksHudson
             );
         }
         HtmlPage page = wc.getPage(p, url);
-        assertTrue(page.asText(), page.asText().contains(content));
+        assertTrue(page.asNormalizedText(), page.asNormalizedText().contains(content));
     }
 
     public void testPublishSingleArtifact() throws Exception {

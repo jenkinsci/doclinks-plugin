@@ -39,7 +39,7 @@ public class ArtifactsDocLinksProjectAction extends ArtifactsDocsLinksActionBase
      * Resolves the owner by {@link StaplerRequest#findAncestorObject(Class)}.
      * 
      * @param req
-     * @return the last {@link ArtifactDocLinksAction}. null if no proper build exists.
+     * @return the last {@link ArtifactsDocLinksAction}. null if no proper build exists.
      */
     public ArtifactsDocLinksAction getLastBuildAction(StaplerRequest req) {
         AbstractBuild<?,?> build = getBuild(req);
@@ -50,7 +50,7 @@ public class ArtifactsDocLinksProjectAction extends ArtifactsDocsLinksActionBase
      * An icon file used in the side menu of a project.
      * 
      * @return an icon path. null if no artifact documents are available.
-     * @see hudson.plugins.doclinks.artifacts.ArtifactDocsLinksActionBase#getIconFileName()
+     * @see hudson.plugins.doclinks.artifacts.ArtifactsDocsLinksActionBase#getIconFileName()
      */
     @Override
     public String getIconFileName() {
