@@ -38,7 +38,7 @@
   <properties>
     <revision>0.8</revision>
     <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.410</jenkins.version>
+    <jenkins.version>2.414.3</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <!-- TODO fix existing violations -->
     <spotbugs.threshold>High</spotbugs.threshold>
@@ -49,8 +49,8 @@
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.401.x</artifactId>
-        <version>2329.v078520e55c19</version>
+        <artifactId>bom-2.414.x</artifactId>
+        <version>2675.v1515e14da_7a_6</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -61,7 +61,6 @@
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
-      <version>3.23</version>
       <optional>true</optional>
     </dependency>
     <dependency>
