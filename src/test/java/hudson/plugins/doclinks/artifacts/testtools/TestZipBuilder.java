@@ -37,7 +37,6 @@ import java.net.URISyntaxException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Creates a zip file with specified name.
@@ -66,7 +65,7 @@ public class TestZipBuilder extends Builder {
         }
 
         String seperator = System.getProperty("file.separator");
-        String resourceDirName = StringUtils.join(getClass().getName().split("\\."), seperator);
+        String resourceDirName = String.join(seperator, getClass().getName().split("\\."));
         File resourceDir = null;
         try {
             resourceDir =
@@ -100,7 +99,8 @@ public class TestZipBuilder extends Builder {
     private void compress(ZipOutputStream zos, File dir, String relative) throws IOException {
         for (String filename : dir.list()) {
             File file = new File(dir, filename);
-            String path = StringUtils.isEmpty(relative) ? filename : String.format("%s/%s", relative, filename);
+            String path =
+                    (relative == null || relative.isEmpty()) ? filename : String.format("%s/%s", relative, filename);
             if (file.isDirectory()) {
                 if (!noEntryForDirectories) {
                     ZipEntry entry = new ZipEntry(String.format("%s/", path));
