@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
-import org.apache.commons.lang.StringUtils;
 import org.htmlunit.html.HtmlAnchor;
 import org.htmlunit.html.HtmlPage;
 import org.xml.sax.SAXException;
@@ -80,7 +79,7 @@ public class ArtifactsDocLinksPublisherHudsonTest extends ArtifactDocLinksHudson
         ArtifactsDocLinksAction action = build.getAction(ArtifactsDocLinksAction.class);
         String url = null;
 
-        if (StringUtils.isEmpty(path)) {
+        if (path == null || path.isEmpty()) {
             url = String.format(
                     "%s/%s",
                     action.getUrlName(),
@@ -115,7 +114,7 @@ public class ArtifactsDocLinksPublisherHudsonTest extends ArtifactDocLinksHudson
         ArtifactsDocLinksAction buildAction = build.getAction(ArtifactsDocLinksAction.class);
 
         String url = null;
-        if (StringUtils.isEmpty(path)) {
+        if (path == null || path.isEmpty()) {
             url = String.format(
                     "%s/%s",
                     action.getUrlName(),

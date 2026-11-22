@@ -30,7 +30,6 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
-import hudson.model.Hudson;
 import hudson.model.Result;
 import hudson.util.FormValidation;
 import java.io.File;
@@ -41,6 +40,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
+import jenkins.model.Jenkins;
 import org.apache.tools.ant.DirectoryScanner;
 import org.codehaus.plexus.util.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
@@ -109,7 +109,7 @@ public class ArtifactsDocLinksConfig implements Describable<ArtifactsDocLinksCon
      */
     @Override
     public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl) Hudson.getInstance().getDescriptor(getClass());
+        return Jenkins.get().getDescriptorByType(DescriptorImpl.class);
     }
 
     public Collection<String> scanArtifacts(AbstractBuild<?, ?> build) {

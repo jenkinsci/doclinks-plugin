@@ -18,6 +18,7 @@ import hudson.plugins.doclinks.Constants;
 import hudson.plugins.doclinks.DocLinksUtils;
 import hudson.plugins.doclinks.Document;
 import hudson.util.FormValidation;
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -26,11 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * Reporter for M2 project
@@ -110,7 +110,7 @@ public class DocLinksMavenReporter extends MavenReporter {
         }
 
         @Override
-        public DocLinksMavenReporter newInstance(final StaplerRequest req, final JSONObject formData)
+        public DocLinksMavenReporter newInstance(final StaplerRequest2 req, final JSONObject formData)
                 throws FormException {
             final List<Document> docs = req.bindJSONToList(Document.class, formData.get("docs"));
             // assign id for new documents;

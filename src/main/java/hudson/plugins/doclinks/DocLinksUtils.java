@@ -82,15 +82,17 @@ public final class DocLinksUtils {
             final AbstractProject<?, ?> project, final String directory, final String file) throws IOException {
         final String f = Util.fixEmptyAndTrim(file);
         if (f == null) {
-            FormValidation.ok();
+            return FormValidation.ok();
         }
+
         // job has not built yet
         final FilePath ws = project.getSomeWorkspace();
         if (ws == null) {
             return FormValidation.ok();
         }
+
         final String dir = Util.fixEmptyAndTrim(directory);
         final FilePath targetDir = (dir != null) ? new FilePath(ws, dir) : ws;
-        return targetDir.validateRelativePath(file, true, true);
+        return targetDir.validateRelativePath(f, true, true);
     }
 }

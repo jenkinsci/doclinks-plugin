@@ -57,8 +57,7 @@ public abstract class ArtifactDocLinksHudsonTestCase extends HudsonTestCase {
 
     @Override
     public WebClient createWebClient() {
-        WebClient wc = new WebClient();
-        return wc;
+        return super.createWebClient();
     }
 
     protected void updateTransientActions(AbstractProject<?, ?> p) throws Exception {

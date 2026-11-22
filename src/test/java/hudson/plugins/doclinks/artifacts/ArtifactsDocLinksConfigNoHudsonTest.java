@@ -24,19 +24,24 @@
 
 package hudson.plugins.doclinks.artifacts;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import hudson.plugins.doclinks.artifacts.ArtifactsDocLinksConfig.DescriptorImpl;
 import hudson.util.FormValidation;
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  */
-public class ArtifactsDocLinksConfigNoHudsonTest extends TestCase {
+class ArtifactsDocLinksConfigNoHudsonTest {
+
     private DescriptorImpl getDescriptor() {
         return new DescriptorImpl();
     }
 
-    public void testArtifactsDocLinksConfig() throws Exception {
+    @Test
+    void testArtifactsDocLinksConfig() throws Exception {
         {
             ArtifactsDocLinksConfig target = new ArtifactsDocLinksConfig(
                     "Some Document Title", "**/*.zip", "path/to/initial/", "defaults.html,defaults.shtml");
@@ -79,20 +84,20 @@ public class ArtifactsDocLinksConfigNoHudsonTest extends TestCase {
         }
     }
 
-    public void testDescriptor_doCheckTitleOk() {
+    @Test
+    void testDescriptor_doCheckTitleOk() {
         DescriptorImpl descriptor = getDescriptor();
-        {
-            assertEquals(FormValidation.Kind.OK, descriptor.doCheckTitle("Some Title").kind);
-            assertEquals(FormValidation.Kind.OK, descriptor.doCheckTitle("  Some Title  ").kind);
-        }
+
+        assertEquals(FormValidation.Kind.OK, descriptor.doCheckTitle("Some Title").kind);
+        assertEquals(FormValidation.Kind.OK, descriptor.doCheckTitle("  Some Title  ").kind);
     }
 
-    public void testDescriptor_doCheckTitleError() {
+    @Test
+    void testDescriptor_doCheckTitleError() {
         DescriptorImpl descriptor = getDescriptor();
-        {
-            assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckTitle(null).kind);
-            assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckTitle("").kind);
-            assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckTitle("  ").kind);
-        }
+
+        assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckTitle(null).kind);
+        assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckTitle("").kind);
+        assertEquals(FormValidation.Kind.ERROR, descriptor.doCheckTitle("  ").kind);
     }
 }

@@ -18,6 +18,7 @@ import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.FormValidation;
+import jakarta.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -25,12 +26,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.ServletException;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * Saves documents which are created in build step.
@@ -114,7 +114,7 @@ public class DocLinksPublisher extends Recorder {
         }
 
         @Override
-        public Publisher newInstance(final StaplerRequest req, final JSONObject formData) throws FormException {
+        public Publisher newInstance(final StaplerRequest2 req, final JSONObject formData) throws FormException {
             final List<Document> docs = req.bindJSONToList(Document.class, formData.get("docs"));
             // assign id for new documents;
             for (final Document doc : docs) {

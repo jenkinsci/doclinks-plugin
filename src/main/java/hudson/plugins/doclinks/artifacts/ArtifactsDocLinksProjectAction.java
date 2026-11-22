@@ -26,7 +26,7 @@ package hudson.plugins.doclinks.artifacts;
 
 import hudson.model.AbstractBuild;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * Action to show a link to artifact documents in side menu of projects.
@@ -35,12 +35,12 @@ public class ArtifactsDocLinksProjectAction extends ArtifactsDocsLinksActionBase
     /**
      * Returns the {@link ArtifactsDocLinksAction} in the last build that have artifact documents.
      *
-     * Resolves the owner by {@link StaplerRequest#findAncestorObject(Class)}.
+     * Resolves the owner by {@link StaplerRequest2#findAncestorObject(Class)}.
      *
      * @param req
      * @return the last {@link ArtifactsDocLinksAction}. null if no proper build exists.
      */
-    public ArtifactsDocLinksAction getLastBuildAction(StaplerRequest req) {
+    public ArtifactsDocLinksAction getLastBuildAction(StaplerRequest2 req) {
         AbstractBuild<?, ?> build = getBuild(req);
         return (build != null) ? build.getAction(ArtifactsDocLinksAction.class) : null;
     }
@@ -53,7 +53,7 @@ public class ArtifactsDocLinksProjectAction extends ArtifactsDocsLinksActionBase
      */
     @Override
     public String getIconFileName() {
-        if (getBuild(Stapler.getCurrentRequest()) == null) {
+        if (getBuild(Stapler.getCurrentRequest2()) == null) {
             return null;
         }
         return super.getIconFileName();
@@ -77,7 +77,7 @@ public class ArtifactsDocLinksProjectAction extends ArtifactsDocsLinksActionBase
      * @param req
      * @return
      */
-    public ArtifactsDocLinksDocument getDynamic(String token, StaplerRequest req) {
+    public ArtifactsDocLinksDocument getDynamic(String token, StaplerRequest2 req) {
         return getLastBuildAction(req).getDynamic(token);
     }
 }

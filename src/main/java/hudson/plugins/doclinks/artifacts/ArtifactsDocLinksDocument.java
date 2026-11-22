@@ -27,7 +27,10 @@ package hudson.plugins.doclinks.artifacts;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.ModelObject;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,21 +39,21 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import org.codehaus.plexus.util.StringUtils;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 /**
  * Holds a link to an artifact published as a document.
  *
- * The build that holds the artifact is resolved by {@link StaplerRequest#findAncestorObject(Class)}
- * at runtime.
+ * The build that holds the artifact is resolved by
+ * {@link StaplerRequest2#findAncestorObject(Class)} at runtime.
  */
 public class ArtifactsDocLinksDocument implements ModelObject {
-    private static Logger LOGGER = Logger.getLogger(ArtifactsDocLinksDocument.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ArtifactsDocLinksDocument.class.getName());
+
     private String artifactName;
+
     /**
      * @return the artifactName
      */
@@ -59,6 +62,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     }
 
     private String title;
+
     /**
      * @return the title
      */
@@ -67,6 +71,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     }
 
     private String initialPath;
+
     /**
      * @return the initialPath
      */
@@ -75,6 +80,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     }
 
     private String indexFile;
+
     /**
      * @return the indexFile
      */
@@ -83,6 +89,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     }
 
     private String id;
+
     /**
      * @return the id used in URL.
      */
@@ -125,12 +132,13 @@ public class ArtifactsDocLinksDocument implements ModelObject {
     }
 
     /**
-     * Resolves the build containing the artifact by {@link StaplerRequest#findAncestorObject(Class)}
+     * Resolves the build containing the artifact by
+     * {@link StaplerRequest2#findAncestorObject(Class)}
      *
      * @param req
      * @return
      */
-    protected AbstractBuild<?, ?> getBuild(StaplerRequest req) {
+    protected AbstractBuild<?, ?> getBuild(StaplerRequest2 req) {
         AbstractBuild<?, ?> build = req.findAncestorObject(AbstractBuild.class);
         if (build != null) {
             return build;
@@ -152,13 +160,16 @@ public class ArtifactsDocLinksDocument implements ModelObject {
      * @throws IOException
      * @throws ServletException
      */
-    public void doDynamic(StaplerRequest req, StaplerResponse resp) throws IOException, ServletException {
+    public void doDynamic(StaplerRequest2 req, StaplerResponse2 resp) throws IOException, ServletException {
         AbstractBuild<?, ?> build = getBuild(req);
         if (build == null) {
             LOGGER.warning(String.format("No build found for url %s", req.getRequestURI()));
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+
+        // Check permission before accessing build artifacts.
+        build.checkPermission(Item.READ);
 
         File artifact = new File(build.getArtifactsDir(), getArtifactName());
         if (!artifact.exists()) {
@@ -188,6 +199,7 @@ public class ArtifactsDocLinksDocument implements ModelObject {
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
+
         ZipFile zip = null;
         try {
             try {
