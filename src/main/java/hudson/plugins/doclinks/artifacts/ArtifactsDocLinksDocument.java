@@ -27,6 +27,7 @@ package hudson.plugins.doclinks.artifacts;
 import hudson.Util;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.ModelObject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -166,6 +167,9 @@ public class ArtifactsDocLinksDocument implements ModelObject {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
         }
+
+        // Check permission before accessing build artifacts.
+        build.checkPermission(Item.READ);
 
         File artifact = new File(build.getArtifactsDir(), getArtifactName());
         if (!artifact.exists()) {

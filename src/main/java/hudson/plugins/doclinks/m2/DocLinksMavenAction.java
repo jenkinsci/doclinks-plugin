@@ -4,6 +4,7 @@ import hudson.FilePath;
 import hudson.maven.MavenModule;
 import hudson.model.Action;
 import hudson.model.DirectoryBrowserSupport;
+import hudson.model.Item;
 import hudson.plugins.doclinks.Constants;
 import hudson.plugins.doclinks.DocLinksUtils;
 import hudson.plugins.doclinks.Document;
@@ -17,7 +18,7 @@ import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 
 /**
- * Action which publishes ducuments.
+ * Action which publishes documents.
  *
  * @author Seiji Sogabe
  */
@@ -60,6 +61,9 @@ public class DocLinksMavenAction implements Action {
     public DirectoryBrowserSupport doDynamic(final StaplerRequest2 req, final StaplerResponse2 rsp)
             throws IOException, ServletException {
 
+        // Check permission before accessing published documents.
+        module.checkPermission(Item.READ);
+
         // get document id from request
         final String id = DocLinksUtils.getDocumentId(req.getRestOfPath());
         if (id == null) {
@@ -79,6 +83,7 @@ public class DocLinksMavenAction implements Action {
         final FilePath basePath = new FilePath(DocLinksMavenReporter.getDocLinksDir(module));
         final DirectoryBrowserSupport dbs =
                 new DirectoryBrowserSupport(this, basePath, Constants.PLUGIN_NAME, null, false);
+
         // set indexfile
         if (doc.getFile() != null) {
             dbs.setIndexFileName(doc.getFile());
