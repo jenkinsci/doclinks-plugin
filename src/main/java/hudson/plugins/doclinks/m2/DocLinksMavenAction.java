@@ -7,14 +7,14 @@ import hudson.model.DirectoryBrowserSupport;
 import hudson.plugins.doclinks.Constants;
 import hudson.plugins.doclinks.DocLinksUtils;
 import hudson.plugins.doclinks.Document;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 /**
  * Action which publishes ducuments.
@@ -57,7 +57,7 @@ public class DocLinksMavenAction implements Action {
         return doc.hasResources(module);
     }
 
-    public DirectoryBrowserSupport doDynamic(final StaplerRequest req, final StaplerResponse rsp)
+    public DirectoryBrowserSupport doDynamic(final StaplerRequest2 req, final StaplerResponse2 rsp)
             throws IOException, ServletException {
 
         // get document id from request

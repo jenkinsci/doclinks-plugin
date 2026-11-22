@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.72</version>
+    <version>6.2250.va_d01d559a_209</version>
     <relativePath />
   </parent>
 
   <groupId>org.jenkinsci.plugins</groupId>
   <artifactId>doclinks</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>${changelist}</version>
   <packaging>hpi</packaging>
+
   <name>Jenkins DocLinks plugin</name>
   <description>This plugin allows you to publish documents which are created in the build steps.</description>
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
@@ -36,21 +39,31 @@
   </scm>
 
   <properties>
-    <revision>0.8</revision>
-    <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.414.3</jenkins.version>
+    <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    <!-- TODO fix existing violations -->
-    <spotbugs.threshold>High</spotbugs.threshold>
+
+    <!-- Jenkins baseline -->
+    <jenkins.baseline>2.568</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
+
+    <!-- Quality checks -->
     <spotless.check.skip>false</spotless.check.skip>
+    <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
+    <ban-deprecated-stapler.skip>false</ban-deprecated-stapler.skip>
+    <ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
+    <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
+    <banObsoleteDependencyOverrides.skip>false</banObsoleteDependencyOverrides.skip>
+
+    <spotbugs.effort>Max</spotbugs.effort>
+    <spotbugs.threshold>High</spotbugs.threshold>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.414.x</artifactId>
-        <version>2675.v1515e14da_7a_6</version>
+        <artifactId>bom-${jenkins.baseline}.x</artifactId>
+        <version>7093.v37de7b_4a_8a_4f</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -63,10 +76,12 @@
       <artifactId>maven-plugin</artifactId>
       <optional>true</optional>
     </dependency>
+
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
     </dependency>
+
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>commons-httpclient3-api</artifactId>
@@ -89,18 +104,4 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.3.0</version>
-        <configuration>
-          <consoleOutput>false</consoleOutput>
-          <configLocation>${project.basedir}/checkstyle.xml</configLocation>
-          <encoding>${project.build.sourceEncoding}</encoding>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

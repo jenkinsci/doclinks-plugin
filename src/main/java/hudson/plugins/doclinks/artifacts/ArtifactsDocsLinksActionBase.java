@@ -3,7 +3,7 @@ package hudson.plugins.doclinks.artifacts;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 
 /**
  * Common base class for {@link ArtifactsDocLinksAction} and {@link ArtifactsDocLinksProjectAction}.
@@ -17,10 +17,10 @@ public abstract class ArtifactsDocsLinksActionBase implements Action {
     /**
      * Returns the container of this action.
      *
-     * @param req {@link StaplerRequest} used for access this action.
+     * @param req {@link StaplerRequest2} used for access this action.
      * @return {@link AbstractProject} or {@link AbstractBuild}.
      */
-    public Object getOwner(StaplerRequest req) {
+    public Object getOwner(StaplerRequest2 req) {
         AbstractBuild<?, ?> build = req.findAncestorObject(AbstractBuild.class);
         if (build != null) {
             return build;
@@ -38,7 +38,7 @@ public abstract class ArtifactsDocsLinksActionBase implements Action {
      * @param req
      * @return the project containing this action
      */
-    public AbstractProject<?, ?> getProject(StaplerRequest req) {
+    public AbstractProject<?, ?> getProject(StaplerRequest2 req) {
         AbstractProject<?, ?> project = req.findAncestorObject(AbstractProject.class);
         if (project != null) {
             return project;
@@ -56,7 +56,7 @@ public abstract class ArtifactsDocsLinksActionBase implements Action {
      * @param req
      * @return the build with document artifacts to handle.
      */
-    public AbstractBuild<?, ?> getBuild(StaplerRequest req) {
+    public AbstractBuild<?, ?> getBuild(StaplerRequest2 req) {
         AbstractBuild<?, ?> build = req.findAncestorObject(AbstractBuild.class);
         if (build != null) {
             return build;
